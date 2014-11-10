@@ -25,6 +25,14 @@ class MrpProduction(orm.Model):
                 cr, uid, field, res[field], context=None)
         return res
 
+    def create(self, cr, uid, vals, context=None):
+        location_fields = set(vals.keys()).intersection(
+            ['location_src_id', 'location_dest_id'])
+        for field in location_fields:
+            vals[field] = self._change_location(
+                cr, uid, field, vals[field], context=None)
+        return super(MrpProduction, self).create(cr, uid, vals, context=context)
+
     def _change_location(self, cr, uid, loc_field, location, context=None):
         """ You may inherit this method to change
             from/to location according to loc_field
