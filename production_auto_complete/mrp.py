@@ -15,26 +15,27 @@ class ProductProduct(orm.Model):
     _inherit = 'product.product'
 
     _columns = {
-        'auto_manufacturing_order': fields.boolean(
-            'Auto Manuf. Order',
+        'manuf_order_auto_complete': fields.boolean(
+            'Complete Manuf. Order',
             help="Check if Manufacturing Order of this product "
-                 "can be confirmed automatically "
-                 "by a planned task (cron)")
+                 "can be comleted automatically "
+                 "by a scheduled action (cron)")
     }
 
     _defaults = {
-        'auto_manufacturing_order': False,
+        'manuf_order_auto_complete': False,
     }
 
 
 class MrpProduction(orm.Model):
     _inherit = 'mrp.production'
 
-    def mo_auto_confirm_cron(self, cr, uid, context=None):
+    def complete_manufacturing_order_cron(self, cr, uid, context=None):
         mo_ids = self.search(
-            cr, uid, [('state', 'in', ['draft'])], context=context)
+            cr, uid, [('state', 'in', ['confirmed', 'ready'])], context=context)
         for production in self.browse(cr, uid, mo_ids, context=context):
-            if production.product_id.auto_manufacturing_order:
-                self.action_confirm(cr, uid, [production.id], context=context)
+            if production.product_id.manuf_order_auto_complete:
+                self.pool.get('mrp.production').action_produce(
+                    cr, uid, production.id, production.product_qty,
+                    'consume_produce', context=context)
         return True
-
