@@ -45,9 +45,6 @@ Contributors
     'data': [
     ],
     'demo': [
-        'demo/res.partner.csv',
-        'demo/company.xml',
-        'demo/product.xml',
     ],
     'external_dependencies': {
         'python': [],
