@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+<record id="mrp_workcenter_view" model="ir.ui.view">
+    <field name="model">mrp.workcenter</field>
+    <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+    <field name="arch" type="xml">
+        <field name="active" position="after">
+            <field name="parent_id"/>
+        </field>
+    </field>
+</record>
+
+
+<record id="mrp_workcenter_tree_view" model="ir.ui.view">
+    <field name="model">mrp.workcenter</field>
+    <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view"/>
+    <field name="arch" type="xml">
+        <field name="resource_type" position="before">
+            <field name="parent_id"/>
+        </field>
+    </field>
+</record>
+
+
+<record id="view_workcenter_load_list" model="ir.ui.view">
+    <field name="model">mrp.workcenter</field>
+    <field name="field_parent">child_id</field>
+    <field name="arch" type="xml">
+        <tree string="Workcenters" toolbar="1" >
+            <field name="code"/>
+            <field name="name"/>
+            <field name="parent_id"/>
+        </tree>
+    </field>
+</record>
+
+<record id="mrp_workcenter_load_action" model="ir.actions.act_window">
+    <field name="name">Work Centers Load</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">mrp.workcenter</field>
+    <field name="view_type">tree</field>
+    <field name="view_id" ref="view_workcenter_load_list"/>
+</record>
+
+<menuitem
+    action="mrp_workcenter_load_action"
+    id="menu_mrp_workcenter_load"
+    parent="mrp.menu_mrp_configuration"
+    sequence="26" groups="base.group_no_one"/>
+
+  </data>
+</openerp>
