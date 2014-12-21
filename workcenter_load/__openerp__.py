@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (C) All Rights Reserved 2014 Akretion
+#    Copyright (C) All Rights Reserved 2015 Akretion
 #    @author David BEAL <david.beal@akretion.com>
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,14 @@
 
 
 {
-    'name': 'Work Center Load',
+    'name': 'Workcenter Load',
     'version': '0.1',
     'author': 'Akretion',
     'maintener': 'Akretion',
     'category': 'Manufacturing',
-    'summary': "Helper to compute work center load",
+    'summary': "Helper to compute workcenters load",
     'depends': [
-        'mrp',
-        'sale',
-        'sale_mrp_link',
+        'mrp_operations',
     ],
     'description': """
 
@@ -43,9 +41,13 @@ Contributors
 """,
     'website': 'http://www.akretion.com/',
     'data': [
-        'routing_view.xml',
+        'workcenter_view.xml',
     ],
     'demo': [
+        'demo/mrp.workcenter.csv',
+        'demo/mrp_1.xml',
+        'demo/mrp.routing.workcenter.csv',
+        'demo/mrp_2.xml',
     ],
     'external_dependencies': {
         'python': [],

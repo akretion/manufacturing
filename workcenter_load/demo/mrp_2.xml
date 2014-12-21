@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<workflow action="button_confirm" model="mrp.production" ref="mo1"/>
+<workflow action="button_confirm" model="mrp.production" ref="mo2"/>
+
+
+<!-- Run Scheduler -->
+<!--<function model="procurement.order" name="run_scheduler"/>-->
+
+    </data>
+</openerp>

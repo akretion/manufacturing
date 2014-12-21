@@ -1,0 +1,17 @@
+id,name,parent_id/id
+mrp_workcenter_17,ALL PLANTS,
+mrp_workcenter_9,PLANT 2,mrp_workcenter_17
+mrp_workcenter_8,PLANT 1,mrp_workcenter_17
+mrp_workcenter_19,Other workshop,mrp_workcenter_9
+mrp_workcenter_10,WorkShop A,mrp_workcenter_8
+mrp_workcenter_15,WorkShop B,mrp_workcenter_8
+mrp_workcenter_5,Cutting,mrp_workcenter_15
+mrp_workcenter_19,cutting 1,mrp_workcenter_5
+mrp_workcenter_7,cutting 2,mrp_workcenter_5
+mrp_workcenter_20,Assembly,mrp_workcenter_15
+mrp_workcenter_13,assembly 2,mrp_workcenter_20
+mrp_workcenter_12,assembly 1,mrp_workcenter_20
+mrp_workcenter_18,new machine,mrp_workcenter_10
+mrp.mrp_workcenter_0,Assembly workshop,mrp_workcenter_9
+mrp.mrp_workcenter_1,Repairs workshop,mrp_workcenter_9
+mrp.mrp_workcenter_2,Assemble,mrp.mrp_workcenter_0

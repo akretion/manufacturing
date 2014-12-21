@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<record id="first" model="product.product">
+    <field name="type">product</field>
+    <field name="supply_method">produce</field>
+    <field name="procure_method">make_to_order</field>
+    <field name="name">First produce</field>
+    <field name="categ_id" ref="product.product_category_1"/>
+</record>
+
+<record id="second" model="product.product">
+    <field name="type">product</field>
+    <field name="supply_method">produce</field>
+    <field name="procure_method">make_to_order</field>
+    <field name="name">Second produce</field>
+    <field name="categ_id" ref="product.product_category_1"/>
+</record>
+
+
+<!-- Resource: mrp.routing -->
+
+<record id="mrp_routing_first" model="mrp.routing">
+    <field name="name">First routing</field>
+</record>
+
+<record id="mrp_routing_2nd" model="mrp.routing">
+    <field name="name">Second routing</field>
+</record>
+
+
+<!-- Resource: mrp.bom -->
+<record id="mrp_b1" model="mrp.bom">
+    <field name="name">First</field>
+    <field name="routing_id" ref="mrp_routing_first"/>
+    <field name="product_id" ref="first"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom" ref="product.product_uom_unit"/>
+    <field name="sequence">1</field>
+    <field name="type">normal</field>
+</record>
+
+<record id="mrp_b2" model="mrp.bom">
+    <field name="name">Second</field>
+    <field name="routing_id" ref="mrp_routing_2nd"/>
+    <field name="product_id" ref="second"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom" ref="product.product_uom_unit"/>
+    <field name="sequence">2</field>
+    <field name="type">normal</field>
+</record>
+
+<!--Manuf Orders-->
+<record id="mo1" model="mrp.production">
+    <field name="product_id" ref="first"/>
+    <field name="product_uom" ref="product.product_uom_unit"/>
+    <field name="product_qty">1</field>
+    <field name="name">workcenter load demo 1</field>
+    <field name="location_src_id" ref="stock.stock_location_stock"/>
+    <field name="location_dest_id" ref="stock.stock_location_output"/>
+    <field name="bom_id" ref="mrp_b1"/>
+    <field name="routing_id" ref="mrp_routing_first"/>
+</record>
+
+<record id="mo2" model="mrp.production">
+    <field name="product_id" ref="second"/>
+    <field name="product_uom" ref="product.product_uom_unit"/>
+    <field name="product_qty">2</field>
+    <field name="name">workcenter load demo 2</field>
+    <field name="location_src_id" ref="stock.stock_location_stock"/>
+    <field name="location_dest_id" ref="stock.stock_location_output"/>
+    <field name="bom_id" ref="mrp_b2"/>
+    <field name="routing_id" ref="mrp_routing_2nd"/>
+</record>
+
+    </data>
+</openerp>
