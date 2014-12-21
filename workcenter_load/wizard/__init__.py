@@ -8,5 +8,4 @@
 #
 ##############################################################################
 
-from . import workcenter
-from . import wizard
+from . import compute

@@ -28,6 +28,14 @@ class MrpWorkcenter(orm.Model):
             'mrp.workcenter',
             'parent_id',
             string='Child Workcenter'),
+        'global_load': fields.float(
+            'Global Load',
+            help="Load for all the Manufacturing Orders in these states:\n"
+                 "'ready' / 'confirmed' / 'in_production'"),
+        'load': fields.float(
+            'Load (h)',
+            help="Load for this particular workcenter"),
+        'last_compute': fields.datetime('Last Compute'),
     }
 
     _parent_name = "parent_id"

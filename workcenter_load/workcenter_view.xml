@@ -29,13 +29,16 @@
         <tree string="Workcenters" toolbar="1" >
             <field name="code"/>
             <field name="name"/>
+            <field name="load"/>
+            <!--<field name="id"/>-->
+            <field name="last_compute"/>
             <field name="parent_id"/>
         </tree>
     </field>
 </record>
 
 <record id="mrp_workcenter_load_action" model="ir.actions.act_window">
-    <field name="name">Workcenters Load</field>
+    <field name="name">Workcenters Load (Cached data)</field>
     <field name="type">ir.actions.act_window</field>
     <field name="res_model">mrp.workcenter</field>
     <field name="view_type">tree</field>
@@ -43,10 +46,16 @@
 </record>
 
 <menuitem
+    id="menu_mrp_load"
+    name="Load"
+    parent="mrp.menu_mrp_planning"
+    sequence="26" groups="base.group_no_one"/>
+
+<menuitem
     action="mrp_workcenter_load_action"
     id="menu_mrp_workcenter_load"
-    parent="mrp.menu_mrp_configuration"
-    sequence="26" groups="base.group_no_one"/>
+    parent="menu_mrp_load"
+    sequence="10" groups="base.group_no_one"/>
 
 
 <!-- After installation of the module, open the related menu -->
