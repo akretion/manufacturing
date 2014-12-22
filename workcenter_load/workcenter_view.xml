@@ -26,11 +26,11 @@
     <field name="model">mrp.workcenter</field>
     <field name="field_parent">child_id</field>
     <field name="arch" type="xml">
-        <tree string="Workcenters" toolbar="1" >
+        <tree string="Workcenters" toolbar="1" version="7.0">
             <field name="code"/>
             <field name="name"/>
+            <field name="global_load"/>
             <field name="load"/>
-            <!--<field name="id"/>-->
             <field name="last_compute"/>
             <field name="parent_id"/>
         </tree>

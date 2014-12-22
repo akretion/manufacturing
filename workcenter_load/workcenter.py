@@ -29,7 +29,7 @@ class MrpWorkcenter(orm.Model):
             'parent_id',
             string='Child Workcenter'),
         'global_load': fields.float(
-            'Global Load',
+            'Global Load (h)',
             help="Load for all the Manufacturing Orders in these states:\n"
                  "'ready' / 'confirmed' / 'in_production'"),
         'load': fields.float(
