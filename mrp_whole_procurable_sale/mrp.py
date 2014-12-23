@@ -15,14 +15,6 @@ class MrpProduction(orm.Model):
     _inherit = ['mrp.production', 'abstract.selection.rotate']
     _name = 'mrp.production'
 
-    def _set_schedule_states(self, cr, uid, context=None):
-        states = super(MrpProduction, self)._set_schedule_states(
-            cr, uid, context=context)
-        states.append(('25', 'Pending'))
-        states = list(set(states))
-        states.sort(key=lambda t: t[0])
-        return states
-
     def set_planable_mo(self, cr, uid, ids, context=None):
         """ Set the MO as to able to be manufactured (20, To Do)
             if all the MO of the sale can be manufactured
@@ -64,5 +56,6 @@ class MrpProduction(orm.Model):
         if field == 'schedule_state':
             # also check model name ?
             res = self._set_schedule_states(cr, uid, context=context)
+            # delete 'unable' state
             del res[0]
         return res

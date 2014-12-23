@@ -29,6 +29,7 @@
     'depends': [
         'sale_mrp_link',
         'production_schedule',
+        'workcenter_load',
     ],
     'description': """
 
