@@ -58,10 +58,12 @@ class AbstractSelectionRotate(orm.Model):
                     type="object"/>
         """
         self._iter_selection(cr, uid, ids, 'next', context=context)
+        return True
 
     def iter_selection_prev(self, cr, uid, ids, context=None):
         " see previous method "
         self._iter_selection(cr, uid, ids, 'prev', context=context)
+        return True
 
     def _get_values_from_selection(self, cr, uid, ids, field, context=None):
         """ Override this method
