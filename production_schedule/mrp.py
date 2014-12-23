@@ -16,9 +16,9 @@ class MrpProduction(orm.Model):
 
     def _set_schedule_states(self, cr, uid, context=None):
         return [
-            ('10', 'Unable'),
-            ('20', 'Todo'),
-            ('30', 'Scheduled'),
+            ('unable', 'Unable'),
+            ('todo', 'Todo'),
+            ('scheduled', 'Scheduled'),
         ]
 
     def __set_schedule_states(self, cr, uid, context=None):
@@ -34,5 +34,5 @@ class MrpProduction(orm.Model):
     }
 
     _defaults = {
-        'schedule_state': '10',
+        'schedule_state': 'unable',
     }

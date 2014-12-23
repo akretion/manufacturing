@@ -29,15 +29,14 @@
     'depends': [
         'sale_mrp_link',
         'production_schedule',
-        'workcenter_load',
     ],
     'description': """
-
 
 
 Contributors
 ------------
 * David BEAL <david.beal@akretion.com>
+* Sébastien BEAL <sebastien.beau@akretion.com>
 
 """,
     'website': 'http://www.akretion.com/',

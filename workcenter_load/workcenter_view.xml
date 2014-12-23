@@ -33,11 +33,11 @@
             <field name="load"/>
             <field name="last_compute"/>
             <field name="parent_id"/>
-            <button name="iter_selection_next"
+<!--            <button name="iter_selection_next"
                     context="{'selection_field': 'my_selection_field'}"
                     icon="gtk-go-forward"
                     type="object"/>
-        </tree>
+-->        </tree>
     </field>
 </record>
 

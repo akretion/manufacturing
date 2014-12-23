@@ -32,10 +32,10 @@
     'description': """
 
 
-
 Contributors
 ------------
 * David BEAL <david.beal@akretion.com>
+* Sébastien BEAL <sebastien.beau@akretion.com>
 
 """,
     'website': 'http://www.akretion.com/',

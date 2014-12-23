@@ -9,15 +9,8 @@
         <form string="Compute Workcenters Load" version="7.0">
             <group name="note" col="4">
                 <p class="oe_grey oe_inline">
-If workcenters are organised in parents and chidren,
-you can get a hierarchical load view.
-<br/>
 If you click on Compute you'll refresh cached load data.
                 </p>
-            </group>
-            <group name="main" col="3">
-                <field name="workcenter_id" colspan="2"/>
-                <span/>
             </group>
             <footer>
                 <button name="compute_load" string="Compute"

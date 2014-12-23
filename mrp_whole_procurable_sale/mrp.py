@@ -41,7 +41,7 @@ class MrpProduction(orm.Model):
                     else:
                         mo_ids.append(production.id)
                 if procurable_sale:
-                    vals = {'schedule_state': '20'}
+                    vals = {'schedule_state': 'todo'}
                     self.write(cr, uid, mo_ids, vals, context=context)
         return True
 
@@ -55,7 +55,6 @@ class MrpProduction(orm.Model):
             cr, uid, ids, field, context=context)
         if field == 'schedule_state':
             # also check model name ?
-            res = self._set_schedule_states(cr, uid, context=context)
-            # delete 'unable' state
-            del res[0]
+            # get states and drop 'unable' state
+            res = self._set_schedule_states(cr, uid, context=context)[1:]
         return res
