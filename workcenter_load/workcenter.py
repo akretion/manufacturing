@@ -41,4 +41,3 @@ class MrpWorkcenter(orm.Model):
     _parent_name = "parent_id"
     _parent_store = True
     _order = 'parent_left'
-

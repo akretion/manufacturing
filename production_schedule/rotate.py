@@ -66,7 +66,7 @@ class AbstractSelectionRotate(orm.Model):
     def _get_values_from_selection(self, cr, uid, ids, field, context=None):
         """ Override this method
             to return your own list of tuples
-            which match field selection values or a sub part
+            which match with field selection values or a sub part
 
             [('val1', 'My Val1'),
              ('val2', 'My Val2')]

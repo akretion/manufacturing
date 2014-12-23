@@ -76,23 +76,20 @@ GROUP BY wl.workcenter_id
                     'last_compute': time.strftime('%Y-%m-%d %H:%M:%S')}
             self.pool['mrp.workcenter'].write(
                 cr, uid, [elm['id']], vals, context=context)
-        # Compute the aggregate data
-        self._compute_summarize_values(
+        # Compute upper level data
+        self._aggregate_values(
             cr, uid, workcenter_hours, context=context)
         return True
 
-    def _compute_summarize_values(self, cr, uid, wk_hours, context=None):
+    def _aggregate_values(self, cr, uid, work_hours, context=None):
         res = self._build_hierarchical_list(cr, uid, context=context)
-        for item in res:
-            parent, children = item.items()[0]
-            working_time = sum([wk_hours[child]
-                                for child in children
-                                if child in wk_hours])
-            parent_wh = 0
-            if parent in wk_hours:
-                parent_wh = wk_hours[parent]
-            wk_hours[parent] = working_time + parent_wh
-            vals = {'global_load': working_time + parent_wh,
+        print res
+        for elm in res:
+            parent, children = elm.items()[0]
+            children_time = sum([work_hours.get(child, 0)
+                                 for child in children])
+            work_hours[parent] = children_time + work_hours.get(parent, 0)
+            vals = {'global_load': work_hours[parent],
                     'last_compute': time.strftime('%Y-%m-%d %H:%M:%S')}
             self.pool['mrp.workcenter'].write(
                 cr, uid, parent, vals, context=context)
@@ -108,19 +105,23 @@ ORDER BY (parent_right - parent_left) ASC, parent_id
         """
         cr.execute(query)
         res = cr.dictfetchall()
-        hierarch, seen_keys = [], []
+        hierarch, filtered_hierarchy = [], []
         position = 0
         pos_in_list = {}
+        # we assign nodes in the right order to make aggregation reliable
+        for elm in res:
+            hierarch.append({elm['id']: []})
+            pos_in_list[elm['id']] = position
+            position += 1
         for elm in res:
             # None values (without parent_id) are not used
             if elm['parent']:
-                if elm['parent'] in seen_keys:
-                    value = hierarch[pos_in_list[elm['parent']]][elm['parent']]
-                    value.append(elm['id'])
-                    hierarch[pos_in_list[elm['parent']]][elm['parent']] = value
-                else:
-                    seen_keys.append(elm['parent'])
-                    hierarch.append({elm['parent']: [elm['id']]})
-                    pos_in_list[elm['parent']] = position
-                    position += 1
-        return hierarch
+                value = hierarch[pos_in_list[elm['parent']]][elm['parent']]
+                value.append(elm['id'])
+                hierarch[pos_in_list[elm['parent']]][elm['parent']] = value
+        for elm in hierarch:
+            parent, children = elm.items()[0]
+            if children:
+                # only nodes with children are useful
+                filtered_hierarchy.append(elm)
+        return filtered_hierarchy
