@@ -32,7 +32,6 @@
             <field name="global_load"/>
             <field name="load"/>
             <field name="last_compute"/>
-            <field name="parent_id"/>
         </tree>
     </field>
 </record>

@@ -8,7 +8,15 @@
 #
 ##############################################################################
 
-from openerp.osv import orm
+from openerp.osv import orm, fields
+
+
+class MrpWorkcenter(orm.Model):
+    _inherit = 'mrp.workcenter'
+
+    _columns = {
+        'pending_load': fields.float('Pending'),
+    }
 
 
 class MrpProduction(orm.Model):

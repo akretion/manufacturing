@@ -41,6 +41,7 @@ Contributors
 """,
     'website': 'http://www.akretion.com/',
     'data': [
+        'workcenter_view.xml',
     ],
     'demo': [
     ],

@@ -24,7 +24,7 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
 
     def _get_sql_query(self, cr, uid, context=None):
         query = """
-            SELECT wl.workcenter_id AS id, sum(wl.hour) AS hour
+            SELECT wl.workcenter_id AS workcenter, sum(wl.hour) AS hour
             FROM mrp_production_workcenter_line wl
                 LEFT JOIN mrp_production mp ON wl.production_id = mp.id
             WHERE mp.state IN (%s) and wl.workcenter_id IN (%s)
@@ -36,12 +36,12 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
     def _write_load(self, cr, uid, result, context=None):
         workcenter_hours = {}
         for elm in result:
-            workcenter_hours[elm['id']] = elm['hour']
+            workcenter_hours[elm['workcenter']] = elm['hour']
             vals = {'load': elm['hour'],
                     'global_load': elm['hour'],
                     'last_compute': time.strftime(ERP_DATETIME)}
             self.pool['mrp.workcenter'].write(
-                cr, uid, [elm['id']], vals, context=context)
+                cr, uid, elm['workcenter'], vals, context=context)
         return workcenter_hours
 
     def compute_load(self, cr, uid, ids, context=None):

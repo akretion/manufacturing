@@ -28,6 +28,7 @@
     'category': 'Manufacturing',
     'depends': [
         'mrp_whole_procurable_sale',
+        'mrp_load_by_schedule_state',
     ],
     'description': """
 
@@ -40,6 +41,7 @@ Contributors
 """,
     'website': 'http://www.akretion.com/',
     'data': [
+        'workcenter_view.xml',
     ],
     'demo': [
     ],

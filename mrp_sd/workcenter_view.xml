@@ -5,11 +5,10 @@
 <record id="view_workcenter_load_list" model="ir.ui.view">
     <field name="model">mrp.workcenter</field>
     <field name="field_parent">child_id</field>
-    <field name="inherit_id" ref="mrp_workcenter_load.view_workcenter_load_list"/>
+    <field name="inherit_id" ref="mrp_load_by_schedule_state.view_workcenter_load_list"/>
     <field name="arch" type="xml">
-        <field name="global_load" position="before">
-            <field name="todo_load"/>
-            <field name="scheduled_load"/>
+        <field name="scheduled_load" position="before">
+            <field name="pending_load"/>
         </field>
     </field>
 </record>
