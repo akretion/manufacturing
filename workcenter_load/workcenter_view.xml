@@ -26,18 +26,14 @@
     <field name="model">mrp.workcenter</field>
     <field name="field_parent">child_id</field>
     <field name="arch" type="xml">
-        <tree string="Workcenters" toolbar="1" version="7.0">
+        <tree string="Workcenters" toolbar="1">
             <field name="code"/>
             <field name="name"/>
             <field name="global_load"/>
             <field name="load"/>
             <field name="last_compute"/>
             <field name="parent_id"/>
-<!--            <button name="iter_selection_next"
-                    context="{'selection_field': 'my_selection_field'}"
-                    icon="gtk-go-forward"
-                    type="object"/>
--->        </tree>
+        </tree>
     </field>
 </record>
 
@@ -45,6 +41,7 @@
     <field name="name">Workcenters Load (Cached data)</field>
     <field name="type">ir.actions.act_window</field>
     <field name="res_model">mrp.workcenter</field>
+    <field name="domain">[('parent_id','=',False)]</field>
     <field name="view_type">tree</field>
     <field name="view_id" ref="view_workcenter_load_list"/>
 </record>

@@ -8,7 +8,6 @@
 #
 ##############################################################################
 
-
 from openerp.osv import orm
 import time
 
@@ -71,7 +70,7 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
 
     def _build_hierarchical_list(self, cr, uid, context=None):
         """ return a workcenter relations list from LOW level to HIGH level
-    [{parent_id1: [child_id1]}, {parent_id2: [child_id5, child_id7]}, ...]
+        [{parent_id1: [child_id1]}, {parent_id2: [child_id5, child_id7]}, ...]
         """
         hierarch, filtered_hierarchy = [], []
         pos_in_list = {}
