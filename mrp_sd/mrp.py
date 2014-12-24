@@ -17,17 +17,6 @@ class MrpProduction(orm.Model):
     def _set_schedule_states(self, cr, uid, context=None):
         states = super(MrpProduction, self)._set_schedule_states(
             cr, uid, context=context)
-        states.append(('25', 'Pending'))
-        states = list(set(states))
-        states.sort(key=lambda t: t[0])
+        position = states.index(('scheduled', 'Scheduled'))
+        states.insert(position, ('pending', 'Pending'))
         return states
-
-
-class HierarchicalWorkcenterLoad(orm.TransientModel):
-    _inherit = 'hierarchical.workcenter.load'
-
-    #def _add_custom_sql_clause(self, cr, uid, context=None):
-    #    res = super(HierarchicalWorkcenterLoad, self)._add_custom_sql_clause(
-    #        cr, uid, context=context)
-    #    res.append("")
-    #    return res
