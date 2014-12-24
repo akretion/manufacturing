@@ -8,8 +8,8 @@
     <field name="arch" type="xml">
         <form string="Compute Workcenters Load" version="7.0">
             <group name="note" col="4">
-                <p class="oe_grey oe_inline">
-If you click on Compute you'll refresh cached load data.
+                <p>
+Compute will refresh cached load data.
                 </p>
             </group>
             <footer>
