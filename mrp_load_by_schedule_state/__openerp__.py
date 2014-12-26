@@ -21,7 +21,7 @@
 
 
 {
-    'name': 'Mrp Load Schedule',
+    'name': 'Mrp Load By Schedule State',
     'version': '0.1',
     'author': 'Akretion',
     'maintener': 'Akretion',

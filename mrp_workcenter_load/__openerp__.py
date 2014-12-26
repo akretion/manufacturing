@@ -21,7 +21,7 @@
 
 
 {
-    'name': 'Workcenter Load',
+    'name': 'Mrp Workcenter Load',
     'version': '0.1',
     'author': 'Akretion',
     'maintener': 'Akretion',

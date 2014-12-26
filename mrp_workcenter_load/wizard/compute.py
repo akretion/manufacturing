@@ -33,18 +33,14 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                                      context=context))
         return query
 
-    def _write_load(self, cr, uid, result, context=None):
-        workcenter_hours = {}
+    def _prepare_load_vals(self, cr, uid, result, context=None):
+        vals = {}
         for elm in result:
-            workcenter_hours[elm['workcenter']] = elm['hour']
-            vals = {'load': elm['hour'],
-                    'global_load': elm['hour'],
-                    'last_compute': time.strftime(ERP_DATETIME)}
-            self.pool['mrp.workcenter'].write(
-                cr, uid, elm['workcenter'], vals, context=context)
-        return workcenter_hours
+            vals[elm['workcenter']] = {'load': elm['hour']}
+        return vals
 
     def compute_load(self, cr, uid, ids, context=None):
+        workcenter_hours = {}
         self._workcter_ids = self.pool['mrp.workcenter'].search(
             cr, uid, [], context=context)
         # Erase cached data
@@ -54,7 +50,13 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         # Compute time for workcenters in mrp_production_workcenter_line
         cr.execute(self._get_sql_query(cr, uid, context=context))
         result = cr.dictfetchall()
-        workcenter_hours = self._write_load(cr, uid, result, context=context)
+        vals = self._prepare_load_vals(cr, uid, result, context=context)
+        for workcenter, values in vals.items():
+            workcenter_hours[workcenter] = values['load']
+            values['global_load'] = values['load']
+            values['last_compute'] = time.strftime(ERP_DATETIME)
+            self.pool['mrp.workcenter'].write(
+                cr, uid, workcenter, values, context=context)
         # Compute upper level data
         self._aggregate_values(
             cr, uid, workcenter_hours, context=context)
@@ -69,7 +71,6 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
 
     def _aggregate_values(self, cr, uid, work_hours, context=None):
         res = self._build_hierarchyical_list(cr, uid, context=context)
-        print res
         for elm in res:
             parent, children = elm.items()[0]
             children_time = sum([work_hours.get(child, 0)

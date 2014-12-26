@@ -9,8 +9,6 @@
 ##############################################################################
 
 from openerp.osv import orm, fields
-import time
-from openerp.tools.misc import (DEFAULT_SERVER_DATETIME_FORMAT as ERP_DATETIME)
 
 
 class MrpWorkcenter(orm.Model):
@@ -30,37 +28,24 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         query = super(HierarchicalWorkcenterLoad, self)._get_sql_query(
             cr, uid, context=context)
         query = query.replace("FROM", ", mp.schedule_state\nFROM")
-        query = query.replace("GROUP BY", "GROUP BY mp.schedule_state,")
+        query = query.replace("BY wl.workcenter_id",
+                              "BY wl.workcenter_id, mp.schedule_state")
         return query
 
-    def _write_load(self, cr, uid, result, context=None):
-        print result
-        # {'hour': 0.8, 'workcenter': 14, 'schedule_state': u'pending'}
-        #import pdb;pdb.set_trace()
-        workcenter_hours = {}
-        values = {}
+    def _prepare_load_vals(self, cr, uid, result, context=None):
+        vals = {}
         for elm in result:
-            # TODO compute with new field
-            if elm['workcenter'] not in workcenter_hours:
-                workcenter_hours[elm['workcenter']] = elm['hour']
-            else:
-                workcenter_hours[elm['workcenter']] += elm['hour']
-            if elm['schedule_state'] not in values:
-                values[elm['schedule_state']] = {elm['workcenter']: elm['hour']}
-            else:
-                if elm['workcenter'] not in values[elm['schedule_state']]:
-                    values[elm['schedule_state']][elm['workcenter']] = elm['hour']
-                else:
-                    values[elm['schedule_state']][elm['workcenter']] += elm['hour']
-            #vals = {'load': elm['hour'],
-            #        'global_load': elm['hour'],
-            #        'last_compute': time.strftime(ERP_DATETIME)}
-        for state, workc_val in values.items():
-            for workc, value in workc_val.items():
-                vals = {
-                    '%s_load' % state: value
+            sched = elm['schedule_state']
+            workcenter = elm['workcenter']
+            if workcenter not in vals:
+                vals[workcenter] = {
+                    'load': elm['hour'],
+                    '%s_load' % sched: elm['hour'],
                 }
-                self.pool['mrp.workcenter'].write(
-                    cr, uid, workc, vals, context=context)
-
-        return workcenter_hours
+            else:
+                vals[workcenter]['load'] += elm['hour']
+                if '%s_load' % sched not in vals[workcenter]:
+                    vals[workcenter]['%s_load' % sched] = elm['hour']
+                else:
+                    vals[workcenter]['%s_load' % sched] += elm['hour']
+        return vals

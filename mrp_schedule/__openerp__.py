@@ -21,7 +21,7 @@
 
 
 {
-    'name': 'Production Schedule',
+    'name': 'Mrp Schedule',
     'version': '0.1',
     'author': 'Akretion',
     'maintener': 'Akretion',
