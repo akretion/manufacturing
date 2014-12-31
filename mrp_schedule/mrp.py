@@ -12,7 +12,8 @@ from openerp.osv import orm, fields
 
 
 class MrpProduction(orm.Model):
-    _inherit = 'mrp.production'
+    _inherit = ['mrp.production', 'abstract.selection.rotate']
+    _name = 'mrp.production'
 
     def _set_schedule_states(self, cr, uid, context=None):
         return [
@@ -29,10 +30,18 @@ class MrpProduction(orm.Model):
             __set_schedule_states,
             'Schedule State',
             readonly=True,
-            oldname="planification",
             help="Planification State"),
     }
 
     _defaults = {
         'schedule_state': 'unable',
     }
+
+    def _get_values_from_selection(self, cr, uid, ids, field, context=None):
+        res = super(MrpProduction, self)._get_values_from_selection(
+            cr, uid, ids, field, context=context)
+        if field == 'schedule_state':
+            # also check model name ?
+            # get states and drop 'unable' state
+            res = self._set_schedule_states(cr, uid, context=context)[1:]
+        return res

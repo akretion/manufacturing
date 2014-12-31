@@ -15,7 +15,7 @@ class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
 
     _columns = {
-        'unable_load': fields.float('Todo'),
+        'unable_load': fields.float('Unable'),
         'todo_load': fields.float('Todo'),
         'scheduled_load': fields.float('Scheduled'),
     }

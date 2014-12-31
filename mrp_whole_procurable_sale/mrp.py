@@ -12,8 +12,7 @@ from openerp.osv import orm
 
 
 class MrpProduction(orm.Model):
-    _inherit = ['mrp.production', 'abstract.selection.rotate']
-    _name = 'mrp.production'
+    _inherit = 'mrp.production'
 
     def set_planable_mo(self, cr, uid, ids, context=None):
         """ Set the MO as to able to be manufactured (20, To Do)
@@ -49,12 +48,3 @@ class MrpProduction(orm.Model):
         " Standard method "
         super(MrpProduction, self).action_ready(cr, uid, ids, context=context)
         self.set_planable_mo(cr, uid, ids, context=context)
-
-    def _get_values_from_selection(self, cr, uid, ids, field, context=None):
-        res = super(MrpProduction, self)._get_values_from_selection(
-            cr, uid, ids, field, context=context)
-        if field == 'schedule_state':
-            # also check model name ?
-            # get states and drop 'unable' state
-            res = self._set_schedule_states(cr, uid, context=context)[1:]
-        return res

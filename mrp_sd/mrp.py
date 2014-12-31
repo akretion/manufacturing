@@ -14,8 +14,20 @@ from openerp.osv import orm, fields
 class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
 
+    def _pending_scheduled_state(self, cr, uid, ids, field_n, arg, context=None):
+        res = {}
+        for elm in self.browse(cr, uid, ids):
+            res[elm.id] = elm.pending_load + elm.scheduled_load
+        return res
+
     _columns = {
-        'pending_load': fields.float('Pending'),
+        'pending_load': fields.float(
+            'Pending',
+            help="Pending Load (hour)"),
+        'pending_scheduled_load': fields.function(
+            _pending_scheduled_state,
+            string='Pend./Sched.',
+            type='float')
     }
 
 

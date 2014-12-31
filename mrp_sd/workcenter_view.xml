@@ -7,6 +7,9 @@
     <field name="field_parent">child_id</field>
     <field name="inherit_id" ref="mrp_load_by_schedule_state.view_workcenter_load_list"/>
     <field name="arch" type="xml">
+        <field name="todo_load" position="before">
+            <field name="pending_scheduled_load"/>
+        </field>
         <field name="scheduled_load" position="before">
             <field name="pending_load"/>
         </field>
