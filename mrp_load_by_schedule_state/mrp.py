@@ -33,6 +33,8 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         return query
 
     def _prepare_load_vals(self, cr, uid, result, context=None):
+        super(HierarchicalWorkcenterLoad, self)._prepare_load_vals(
+            cr, uid, result, context=context)
         vals = {}
         for elm in result:
             sched = elm['schedule_state']
@@ -44,8 +46,8 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                 }
             else:
                 vals[workcenter]['load'] += elm['hour']
-                if '%s_load' % sched not in vals[workcenter]:
-                    vals[workcenter]['%s_load' % sched] = elm['hour']
-                else:
+                if '%s_load' % sched in vals[workcenter]:
                     vals[workcenter]['%s_load' % sched] += elm['hour']
+                else:
+                    vals[workcenter]['%s_load' % sched] = elm['hour']
         return vals
