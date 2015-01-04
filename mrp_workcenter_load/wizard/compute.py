@@ -15,6 +15,7 @@ from openerp.tools.misc import (DEFAULT_SERVER_DATETIME_FORMAT as ERP_DATETIME)
 
 class HierarchicalWorkcenterLoad(orm.TransientModel):
     _name = 'hierarchical.workcenter.load'
+    _workcter_ids = None
 
     def _add_sql_clauses(self, cr, uid, workcenter_ids, context=None):
         states = ['ready', 'confirmed', 'in_production']
@@ -52,11 +53,12 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         result = cr.dictfetchall()
         vals = self._prepare_load_vals(cr, uid, result, context=context)
         for workcenter, values in vals.items():
-            workcenter_hours[workcenter] = values['load']
-            values['global_load'] = values['load']
-            values['last_compute'] = time.strftime(ERP_DATETIME)
+            workcenter_hours[workcenter] = values
+            to_update = dict(values)
+            to_update['global_load'] = values['load']
+            to_update['last_compute'] = time.strftime(ERP_DATETIME)
             self.pool['mrp.workcenter'].write(
-                cr, uid, workcenter, values, context=context)
+                cr, uid, workcenter, to_update, context=context)
         # Compute upper level data
         self._aggregate_values(
             cr, uid, workcenter_hours, context=context)
@@ -69,19 +71,66 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             'target': 'current',
         }
 
-    def _aggregate_values(self, cr, uid, work_hours, context=None):
-        res = self._build_hierarchyical_list(cr, uid, context=context)
-        for elm in res:
-            parent, children = elm.items()[0]
-            children_time = sum([work_hours.get(child, 0)
-                                 for child in children])
-            work_hours[parent] = children_time + work_hours.get(parent, 0)
-            vals = {'global_load': work_hours[parent],
-                    'last_compute': time.strftime(ERP_DATETIME)}
-            self.pool['mrp.workcenter'].write(
-                cr, uid, parent, vals, context=context)
+    def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,
+                               work_hours, context=None):
+        print '    ', child, self.pool['mrp.workcenter'].browse(cr, uid, child).name, ' child', key, val
+        if key != 'load':
+            if key == 'todo_load':
+                import pdb;pdb.set_trace()
+            if key in parent_hr:
+                parent_hr[key] += val
+            else:
+                parent_hr[key] = val
+        else:
+            if 'global_load' not in parent_hr:
+                parent_hr['global_load'] = 0
+            if 'global_load' in work_hours[child]:
+                parent_hr['global_load'] += work_hours[child]['global_load']
+            if 'load' in work_hours[child]:
+                parent_hr['global_load'] += work_hours[child]['load']
 
-    def _build_hierarchyical_list(self, cr, uid, context=None):
+    def _aggregate_values(self, cr, uid, work_hours, context=None):
+        res = self._build_hierarchical_list(cr, uid, context=context)
+        print work_hours
+        for elm in res:
+            parent_hr = {}
+            parent, children = elm.items()[0]
+            print elm, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, [x.name for x in self.pool['mrp.workcenter'].browse(cr, uid, children)]
+            import pdb;pdb.set_trace()
+            if parent in work_hours:
+                parent_hr = work_hours[parent]
+                print parent, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, 'parent    work_hours', work_hours[parent]
+            for child in children:
+                if child in work_hours:
+                    for key, val in work_hours[child].items():
+                        self._aggregate_child_value(
+                            cr, uid, child, key, val, parent_hr, work_hours,
+                            context=context)
+            print 'parent_hr', parent_hr
+            if parent_hr:
+                if parent in work_hours:
+                    for key, val in parent_hr.items():
+                        if key != 'load':
+                            if key in work_hours[parent]:
+                                work_hours[parent][key] += val
+                            else:
+                                work_hours[parent][key] = val
+                else:
+                    work_hours[parent] = parent_hr
+                # parent_hr['global_load'] = parent_hr['load']
+                # if 'load' in work_hours[parent]:
+                #     parent_hr['global_load'] += work_hours[parent]['load']
+            #children_time = sum([work_hours['load'].get(child, 0)
+            #                     for child in children])
+            #work_hours['load'][parent] = (children_time +
+            #                              work_hours['load'].get(parent, 0))
+            #vals = {'global_load': work_hours['load'][parent],
+            #       }
+            self.pool['mrp.workcenter'].write(
+                cr, uid, parent, parent_hr, context=context)
+        print '\n', work_hours
+
+    def _build_hierarchical_list(self, cr, uid, context=None):
         """ return a workcenter relations list from LOW level to HIGH level
         [{parent_id1: [child_id1]}, {parent_id2: [child_id5, child_id7]}, ...]
         """
@@ -101,12 +150,13 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             pos_in_list[elm['id']] = position
             position += 1
         for elm in res:
-            if elm['parent']:
-                value = hierarchy[pos_in_list[elm['parent']]][elm['parent']]
+            parent = elm['parent']
+            if parent:
+                value = hierarchy[pos_in_list[parent]][parent]
                 value.append(elm['id'])
-                hierarchy[pos_in_list[elm['parent']]][elm['parent']] = value
+                hierarchy[pos_in_list[parent]][parent] = value
         for elm in hierarchy:
-            parent, children = elm.items()[0]
+            _, children = elm.items()[0]
             if children:
                 # only nodes with children are useful
                 filtered_hierarchy.append(elm)
