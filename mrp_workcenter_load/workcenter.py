@@ -41,3 +41,11 @@ class MrpWorkcenter(orm.Model):
     _parent_name = "parent_id"
     _parent_store = True
     _order = 'parent_left'
+
+    def toogle_active(self, cr, uid, ids, context=None):
+        for elm in self.browse(cr, uid, ids, context=context):
+            active = True
+            if elm.active:
+                active = False
+            self.write(cr, uid, ids, {'active': active}, context=context)
+        return True

@@ -40,32 +40,43 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             vals[elm['workcenter']] = {'load': elm['hour']}
         return vals
 
+    def _erase_cached_data(self, cr, uid, context=None):
+        " Update to 0 '*load' columns "
+        MrpWorkC = self.pool['mrp.workcenter']
+        vals = {}
+        for col in MrpWorkC._columns:
+            if len(col) > 3 and col[-4:] == 'load':
+                vals.update({col: 0})
+        MrpWorkC.write(cr, uid, self._workcter_ids, vals, context=context)
+        return True
+
     def compute_load(self, cr, uid, ids, context=None):
         workcenter_hours = {}
         self._workcter_ids = self.pool['mrp.workcenter'].search(
             cr, uid, [], context=context)
-        # Erase cached data
-        vals = {'load': 0, 'global_load': 0}
-        self.pool['mrp.workcenter'].write(cr, uid, self._workcter_ids, vals,
-                                          context=context)
+        self._erase_cached_data(cr, uid, context=context)
         # Compute time for workcenters in mrp_production_workcenter_line
         cr.execute(self._get_sql_query(cr, uid, context=context))
         result = cr.dictfetchall()
         vals = self._prepare_load_vals(cr, uid, result, context=context)
         for workcenter, values in vals.items():
             workcenter_hours[workcenter] = values
+            workcenter_hours[workcenter]['global_load'] = values['load']
             to_update = dict(values)
-            to_update['global_load'] = values['load']
+            #to_update['global_load'] = values['load']
             to_update['last_compute'] = time.strftime(ERP_DATETIME)
             self.pool['mrp.workcenter'].write(
                 cr, uid, workcenter, to_update, context=context)
         # Compute upper level data
         self._aggregate_values(
             cr, uid, workcenter_hours, context=context)
+        import pdb;pdb.set_trace()
         return {
             'name': 'Workcenters Load',
             'view_type': 'tree',
             'view_mode': 'tree',
+            'view_id': self.pool['ir.model.data'].get_object_reference(
+                cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
             'res_model': 'mrp.workcenter',
             'type': 'ir.actions.act_window',
             'target': 'current',
@@ -74,60 +85,44 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
     def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,
                                work_hours, context=None):
         print '    ', child, self.pool['mrp.workcenter'].browse(cr, uid, child).name, ' child', key, val
-        if key != 'load':
-            if key == 'todo_load':
-                import pdb;pdb.set_trace()
+        if key not in ('load', 'global_load'):
             if key in parent_hr:
                 parent_hr[key] += val
             else:
                 parent_hr[key] = val
-        else:
-            if 'global_load' not in parent_hr:
-                parent_hr['global_load'] = 0
-            if 'global_load' in work_hours[child]:
-                parent_hr['global_load'] += work_hours[child]['global_load']
-            if 'load' in work_hours[child]:
-                parent_hr['global_load'] += work_hours[child]['load']
 
     def _aggregate_values(self, cr, uid, work_hours, context=None):
+        MrpWorkC = self.pool['mrp.workcenter']
         res = self._build_hierarchical_list(cr, uid, context=context)
-        print work_hours
         for elm in res:
             parent_hr = {}
             parent, children = elm.items()[0]
-            print elm, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, [x.name for x in self.pool['mrp.workcenter'].browse(cr, uid, children)]
-            import pdb;pdb.set_trace()
+            print work_hours
+            print 'PARENT', parent
+            print elm, MrpWorkC.browse(cr, uid, parent).name, [x.name for x in MrpWorkC.browse(cr, uid, children)]
             if parent in work_hours:
                 parent_hr = work_hours[parent]
-                print parent, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, 'parent    work_hours', work_hours[parent]
+                #print parent, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, 'parent    work_hours', work_hours[parent]
             for child in children:
                 if child in work_hours:
                     for key, val in work_hours[child].items():
                         self._aggregate_child_value(
                             cr, uid, child, key, val, parent_hr, work_hours,
                             context=context)
-            print 'parent_hr', parent_hr
+                        print key, 'parent_hr', parent_hr
+                    if 'global_load' not in parent_hr:
+                        parent_hr['global_load'] = 0
+                    if 'global_load' in work_hours[child]:
+                        parent_hr['global_load'] += work_hours[child]['global_load']
             if parent_hr:
                 if parent in work_hours:
-                    for key, val in parent_hr.items():
-                        if key != 'load':
-                            if key in work_hours[parent]:
-                                work_hours[parent][key] += val
-                            else:
-                                work_hours[parent][key] = val
-                else:
-                    work_hours[parent] = parent_hr
-                # parent_hr['global_load'] = parent_hr['load']
-                # if 'load' in work_hours[parent]:
-                #     parent_hr['global_load'] += work_hours[parent]['load']
-            #children_time = sum([work_hours['load'].get(child, 0)
-            #                     for child in children])
-            #work_hours['load'][parent] = (children_time +
-            #                              work_hours['load'].get(parent, 0))
-            #vals = {'global_load': work_hours['load'][parent],
-            #       }
-            self.pool['mrp.workcenter'].write(
-                cr, uid, parent, parent_hr, context=context)
+                    if 'load' in parent_hr and 'load' in work_hours[parent]:
+                        #work_hours[parent]['global_load'] += parent_hr['load']
+                        parent_hr['global_load'] += parent_hr['load']
+                        print 'parent_hr', parent_hr
+                print 'NORMALLY NOT', parent_hr
+                work_hours[parent] = parent_hr
+                MrpWorkC.write(cr, uid, parent, parent_hr, context=context)
         print '\n', work_hours
 
     def _build_hierarchical_list(self, cr, uid, context=None):

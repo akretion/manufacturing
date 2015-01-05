@@ -21,7 +21,7 @@
 
 
 {
-    'name': 'Production SD',
+    'name': 'Mrp SD',
     'version': '0.1',
     'author': 'Akretion',
     'maintener': 'Akretion',
