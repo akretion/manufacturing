@@ -21,6 +21,7 @@
         </field>
         <field name="resource_type" position="replace">
             <field name="global_load"/>
+            <field name="day_capacity"/>
             <field name="load"/>
             <field name="last_compute"/>
             <button name="toogle_active"

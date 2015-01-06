@@ -35,7 +35,13 @@ class MrpWorkcenter(orm.Model):
         'load': fields.float(
             'Load (h)',
             help="Load for this particular workcenter"),
-        'last_compute': fields.datetime('Last Compute'),
+        'last_compute': fields.datetime(
+            'Calculation',
+            oldname="last_compute",
+            help="Last calculation"),
+        'day_capacity': fields.float(
+            'Capacity',
+            help="(h/day)")
     }
 
     _parent_name = "parent_id"
@@ -45,7 +51,57 @@ class MrpWorkcenter(orm.Model):
     def toogle_active(self, cr, uid, ids, context=None):
         for elm in self.browse(cr, uid, ids, context=context):
             active = True
+            active_ids = ids
             if elm.active:
+                active_ids = self.search(
+                    cr, uid, [
+                        ('parent_id', 'child_of', [elm.id])],
+                    context=context)
                 active = False
-            self.write(cr, uid, ids, {'active': active}, context=context)
+            self.write(cr, uid, active_ids, {'active': active}, context=context)
+        self._compute_capacity(cr, uid, context=context)
         return True
+
+    def _compute_capacity(self, cr, uid, context=None):
+        res = self._build_hierarchical_list(cr, uid, context=context)
+        for elm in res:
+            parent, children_ids = elm.items()[0]
+            capacity = 0
+            for child in self.browse(cr, uid, children_ids, context=context):
+                # unactive workcenters should not taken account
+                if child.active:
+                    capacity += child.day_capacity
+            vals = {'day_capacity': capacity}
+            self.write(cr, uid, parent, vals, context=context)
+
+    def _build_hierarchical_list(self, cr, uid, context=None):
+        """ return a workcenter relations list from LOW level to HIGH level
+        [{parent_id1: [child_id1]}, {parent_id2: [child_id5, child_id7]}, ...]
+        """
+        hierarchy, filtered_hierarchy = [], []
+        pos_in_list = {}
+        position = 0
+        query = """
+            SELECT id, parent_id AS parent
+            FROM mrp_workcenter
+            ORDER BY (parent_right - parent_left) ASC, parent_id
+        """
+        cr.execute(query)
+        res = cr.dictfetchall()
+        # we assign nodes in the right order to make aggregation reliable
+        for elm in res:
+            hierarchy.append({elm['id']: []})
+            pos_in_list[elm['id']] = position
+            position += 1
+        for elm in res:
+            parent = elm['parent']
+            if parent:
+                value = hierarchy[pos_in_list[parent]][parent]
+                value.append(elm['id'])
+                hierarchy[pos_in_list[parent]][parent] = value
+        for elm in hierarchy:
+            _, children = elm.items()[0]
+            if children:
+                # only nodes with children are useful
+                filtered_hierarchy.append(elm)
+        return filtered_hierarchy

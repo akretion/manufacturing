@@ -70,7 +70,6 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         # Compute upper level data
         self._aggregate_values(
             cr, uid, workcenter_hours, context=context)
-        import pdb;pdb.set_trace()
         return {
             'name': 'Workcenters Load',
             'view_type': 'tree',
@@ -93,7 +92,7 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
 
     def _aggregate_values(self, cr, uid, work_hours, context=None):
         MrpWorkC = self.pool['mrp.workcenter']
-        res = self._build_hierarchical_list(cr, uid, context=context)
+        res = MrpWorkC._build_hierarchical_list(cr, uid, context=context)
         for elm in res:
             parent_hr = {}
             parent, children = elm.items()[0]
@@ -114,45 +113,11 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                         parent_hr['global_load'] = 0
                     if 'global_load' in work_hours[child]:
                         parent_hr['global_load'] += work_hours[child]['global_load']
-            if parent_hr:
-                if parent in work_hours:
-                    if 'load' in parent_hr and 'load' in work_hours[parent]:
-                        #work_hours[parent]['global_load'] += parent_hr['load']
-                        parent_hr['global_load'] += parent_hr['load']
-                        print 'parent_hr', parent_hr
+            if parent_hr and parent in work_hours:
+                if 'load' in parent_hr and 'load' in work_hours[parent]:
+                    parent_hr['global_load'] += parent_hr['load']
+                    print 'parent_hr', parent_hr
                 print 'NORMALLY NOT', parent_hr
                 work_hours[parent] = parent_hr
                 MrpWorkC.write(cr, uid, parent, parent_hr, context=context)
         print '\n', work_hours
-
-    def _build_hierarchical_list(self, cr, uid, context=None):
-        """ return a workcenter relations list from LOW level to HIGH level
-        [{parent_id1: [child_id1]}, {parent_id2: [child_id5, child_id7]}, ...]
-        """
-        hierarchy, filtered_hierarchy = [], []
-        pos_in_list = {}
-        position = 0
-        query = """
-            SELECT id, parent_id AS parent
-            FROM mrp_workcenter
-            ORDER BY (parent_right - parent_left) ASC, parent_id
-        """
-        cr.execute(query)
-        res = cr.dictfetchall()
-        # we assign nodes in the right order to make aggregation reliable
-        for elm in res:
-            hierarchy.append({elm['id']: []})
-            pos_in_list[elm['id']] = position
-            position += 1
-        for elm in res:
-            parent = elm['parent']
-            if parent:
-                value = hierarchy[pos_in_list[parent]][parent]
-                value.append(elm['id'])
-                hierarchy[pos_in_list[parent]][parent] = value
-        for elm in hierarchy:
-            _, children = elm.items()[0]
-            if children:
-                # only nodes with children are useful
-                filtered_hierarchy.append(elm)
-        return filtered_hierarchy
