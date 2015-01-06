@@ -14,6 +14,12 @@ from openerp.osv import orm, fields
 class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
 
+    def _compute_availability(self, cr, uid, ids, field_n, arg, context=None):
+        res = {}
+        for elm in self.browse(cr, uid, ids):
+            res[elm.id] = elm.day_capacity - elm.global_load
+        return res
+
     _columns = {
         'parent_id': fields.many2one(
             'mrp.workcenter',
@@ -41,7 +47,11 @@ class MrpWorkcenter(orm.Model):
             help="Last calculation"),
         'day_capacity': fields.float(
             'Capacity',
-            help="(h/day)")
+            help="(h/day)"),
+        'availability': fields.function(
+            _compute_availability,
+            string='Available',
+            type='float'),
     }
 
     _parent_name = "parent_id"
