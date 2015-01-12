@@ -83,7 +83,7 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
 
     def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,
                                work_hours, context=None):
-        print '    ', child, self.pool['mrp.workcenter'].browse(cr, uid, child).name, ' child', key, val
+        #print '    ', child, self.pool['mrp.workcenter'].browse(cr, uid, child).name, ' child', key, val
         if key not in ('load', 'global_load'):
             if key in parent_hr:
                 parent_hr[key] += val
@@ -96,9 +96,9 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         for elm in res:
             parent_hr = {}
             parent, children = elm.items()[0]
-            print work_hours
-            print 'PARENT', parent
-            print elm, MrpWorkC.browse(cr, uid, parent).name, [x.name for x in MrpWorkC.browse(cr, uid, children)]
+            #print work_hours
+            #print 'PARENT', parent
+            #print elm, MrpWorkC.browse(cr, uid, parent).name, [x.name for x in MrpWorkC.browse(cr, uid, children)]
             if parent in work_hours:
                 parent_hr = work_hours[parent]
                 #print parent, self.pool['mrp.workcenter'].browse(cr, uid, parent).name, 'parent    work_hours', work_hours[parent]
@@ -108,7 +108,7 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                         self._aggregate_child_value(
                             cr, uid, child, key, val, parent_hr, work_hours,
                             context=context)
-                        print key, 'parent_hr', parent_hr
+                        #print key, 'parent_hr', parent_hr
                     if 'global_load' not in parent_hr:
                         parent_hr['global_load'] = 0
                     if 'global_load' in work_hours[child]:
@@ -116,8 +116,8 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             if parent_hr and parent in work_hours:
                 if 'load' in parent_hr and 'load' in work_hours[parent]:
                     parent_hr['global_load'] += parent_hr['load']
-                    print 'parent_hr', parent_hr
-                print 'NORMALLY NOT', parent_hr
+                    #print 'parent_hr', parent_hr
+                #print 'NORMALLY NOT', parent_hr
                 work_hours[parent] = parent_hr
                 MrpWorkC.write(cr, uid, parent, parent_hr, context=context)
-        print '\n', work_hours
+        #print '\n', work_hours

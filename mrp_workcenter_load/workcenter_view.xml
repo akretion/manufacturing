@@ -16,8 +16,8 @@
     <field name="model">mrp.workcenter</field>
     <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view"/>
     <field name="arch" type="xml">
-        <field name="name" position="before">
-            <field name="parent_id"/>
+        <field name="name" position="replace">
+            <field name="hierachical_name"/>
         </field>
         <field name="resource_type" position="replace">
             <field name="global_load"/>
@@ -25,21 +25,22 @@
             <field name="availability"/>
             <field name="load"/>
             <field name="last_compute"/>
-            <button name="toogle_active"
-                    string="active / unactive"
-                    icon="terp-locked"
+            <button name="toogle_used"
+                    string="Click to connect => will be used in capacity computation"
+                    icon="gtk-disconnect"
+                    attrs="{'invisible': [('used', '=', True)]}"
                     type="object"/>
-            <field name="active" string="act."/>
+            <button name="toogle_used"
+                    string="Click to disconnect => workcenters children will also be disconnected"
+                    icon="gtk-connect"
+                    attrs="{'invisible': [('used', '=', False)]}"
+                    type="object"/>
+            <field name="used" invisible="1"/>
         </field>
         <xpath expr="//tree[@ string='Work Center']" position="attributes">
-            <attribute name="colors">red:global_load>0 and active==False;grey:active==False</attribute>
+            <attribute name="colors">red:global_load>0 and used==False;grey:used==False</attribute>
         </xpath>
     </field>
-</record>
-
-<record id="mrp.mrp_workcenter_action" model="ir.actions.act_window">
-    <field name="context">{'active_test': False}</field>
-    <field name="view_id" ref="mrp.mrp_workcenter_tree_view"/>
 </record>
 
 <menuitem
