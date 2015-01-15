@@ -25,7 +25,7 @@ class MrpWorkcenter(orm.Model):
         for elm in self.browse(cr, uid, ids):
             distance = elm.level
             distance = ''.join(['-'] * distance)
-            res[elm.id] = '%s %s' % (distance, elm.name)
+            res[elm.id] = '%s%s' % (distance, elm.name)
         return res
 
     _columns = {
@@ -153,14 +153,14 @@ class MrpWorkcenter(orm.Model):
             level 2: [2, 3, 8]
         """
         children_level = {}
-        ever_fall_in_lower_level = {}
+        already_fallen_in_lower_level = {}
         level = 0
         for elm in reversed(hierarchy):
             parent, children = elm.items()[0]
-            ever_fall_in_lower_level[level] = False
+            already_fallen_in_lower_level[level] = False
             if level in children_level and parent in children_level[level]:
-                if ever_fall_in_lower_level[level] is False:
-                    ever_fall_in_lower_level[level] = True
+                if already_fallen_in_lower_level[level] is False:
+                    already_fallen_in_lower_level[level] = True
                     level += 1
             if level in children_level:
                 children_level[level].extend(children)
