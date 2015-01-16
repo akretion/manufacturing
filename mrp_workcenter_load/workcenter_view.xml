@@ -9,6 +9,9 @@
         <field name="active" position="after">
             <field name="parent_id"/>
         </field>
+        <xpath expr="//field[@name='time_stop']" position="after">
+            <field name="day_capacity" string="Day Capacity"/>
+        </xpath>
     </field>
 </record>
 

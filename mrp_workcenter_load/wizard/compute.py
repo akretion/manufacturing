@@ -54,32 +54,34 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
         workcenter_hours = {}
         self._workcter_ids = self.pool['mrp.workcenter'].search(
             cr, uid, [], context=context)
-        self._erase_cached_data(cr, uid, context=context)
-        # Compute time for workcenters in mrp_production_workcenter_line
-        cr.execute(self._get_sql_query(cr, uid, context=context))
-        result = cr.dictfetchall()
-        vals = self._prepare_load_vals(cr, uid, result, context=context)
-        for workcenter, values in vals.items():
-            workcenter_hours[workcenter] = values
-            workcenter_hours[workcenter]['global_load'] = values['load']
-            to_update = dict(values)
-            #to_update['global_load'] = values['load']
-            to_update['last_compute'] = time.strftime(ERP_DATETIME)
-            self.pool['mrp.workcenter'].write(
-                cr, uid, workcenter, to_update, context=context)
-        # Compute upper level data
-        self._aggregate_values(
-            cr, uid, workcenter_hours, context=context)
-        return {
-            'name': 'Workcenters Load',
-            'view_type': 'tree',
-            'view_mode': 'tree',
-            'view_id': self.pool['ir.model.data'].get_object_reference(
-                cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
-            'res_model': 'mrp.workcenter',
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-        }
+        if self._workcter_ids:
+            self._erase_cached_data(cr, uid, context=context)
+            # Compute time for workcenters in mrp_production_workcenter_line
+            cr.execute(self._get_sql_query(cr, uid, context=context))
+            result = cr.dictfetchall()
+            vals = self._prepare_load_vals(cr, uid, result, context=context)
+            for workcenter, values in vals.items():
+                workcenter_hours[workcenter] = values
+                workcenter_hours[workcenter]['global_load'] = values['load']
+                to_update = dict(values)
+                #to_update['global_load'] = values['load']
+                to_update['last_compute'] = time.strftime(ERP_DATETIME)
+                self.pool['mrp.workcenter'].write(
+                    cr, uid, workcenter, to_update, context=context)
+            # Compute upper level data
+            self._aggregate_values(
+                cr, uid, workcenter_hours, context=context)
+            return {
+                'name': 'Workcenters Load',
+                'view_type': 'tree',
+                'view_mode': 'tree',
+                'view_id': self.pool['ir.model.data'].get_object_reference(
+                    cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
+                'res_model': 'mrp.workcenter',
+                'type': 'ir.actions.act_window',
+                'target': 'current',
+            }
+        return True
 
     def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,
                                work_hours, context=None):

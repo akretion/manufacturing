@@ -66,7 +66,7 @@ class MrpWorkcenter(orm.Model):
             help="Last calculation"),
         'day_capacity': fields.float(
             'Capacity',
-            help="(h/day)"),
+            help="Number of hours a day available to produce"),
         'availability': fields.function(
             _compute_availability,
             string='Available',
