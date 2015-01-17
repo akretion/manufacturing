@@ -11,6 +11,7 @@
 from openerp.osv import orm
 import time
 from openerp.tools.misc import (DEFAULT_SERVER_DATETIME_FORMAT as ERP_DATETIME)
+from ..workcenter import WORKCENTER_ACTION
 
 
 class HierarchicalWorkcenterLoad(orm.TransientModel):
@@ -71,16 +72,18 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             # Compute upper level data
             self._aggregate_values(
                 cr, uid, workcenter_hours, context=context)
-            return {
-                'name': 'Workcenters Load',
-                'view_type': 'tree',
-                'view_mode': 'tree',
-                'view_id': self.pool['ir.model.data'].get_object_reference(
-                    cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
-                'res_model': 'mrp.workcenter',
-                'type': 'ir.actions.act_window',
-                'target': 'current',
-            }
+            view_id = self.pool['ir.model.data'].get_object_reference(
+                cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
+            WORKCENTER_ACTION['view_id'] = view_id
+            return WORKCENTER_ACTION
+            #return {
+            #    'view_mode': 'tree',
+            #    'view_id': self.pool['ir.model.data'].get_object_reference(
+            #        cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
+            #    'res_model': 'mrp.workcenter',
+            #    'type': 'ir.actions.act_window',
+            #    'target': 'current',
+            #}
         return True
 
     def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,

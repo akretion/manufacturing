@@ -10,6 +10,13 @@
 
 from openerp.osv import orm, fields
 
+WORKCENTER_ACTION = {
+    'view_mode': 'tree',
+    'res_model': 'mrp.workcenter',
+    'type': 'ir.actions.act_window',
+    'target': 'current',
+}
+
 
 class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
@@ -91,7 +98,10 @@ class MrpWorkcenter(orm.Model):
             vals = {'used': used}
             self.write(cr, uid, used_ids, vals, context=context)
         self._compute_capacity(cr, uid, context=context)
-        return True
+        view_id = self.pool['ir.model.data'].get_object_reference(
+            cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
+        WORKCENTER_ACTION['view_id'] = view_id
+        return WORKCENTER_ACTION
 
     def _compute_capacity(self, cr, uid, context=None):
         """ Compute capacity of the workcenters which have children """
