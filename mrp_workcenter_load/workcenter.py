@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #  licence AGPL version 3 or later
-#  see licence in __openerp__.py or http://www.gnu.org/licenses/agpl-3.0.txt
+#  see license in __openerp__.py or http://www.gnu.org/licenses/agpl-3.0.txt
 #  Copyright (C) 2015 Akretion (http://www.akretion.com).
 #  @author David BEAL <david.beal@akretion.com>
 #
@@ -11,7 +11,6 @@
 from openerp.osv import orm, fields
 
 WORKCENTER_ACTION = {
-    'view_mode': 'tree',
     'res_model': 'mrp.workcenter',
     'type': 'ir.actions.act_window',
     'target': 'current',
@@ -31,7 +30,7 @@ class MrpWorkcenter(orm.Model):
         res = {}
         for elm in self.browse(cr, uid, ids):
             distance = elm.level
-            distance = ''.join(['-'] * distance)
+            distance = ''.join(['--'] * distance)
             res[elm.id] = '%s%s' % (distance, elm.name)
         return res
 
@@ -84,6 +83,20 @@ class MrpWorkcenter(orm.Model):
     _parent_store = True
     _order = 'parent_left'
 
+    def button_workcenter_line(self, cr, uid, ids, context=None):
+        for elm in self.browse(cr, uid, ids, context=context):
+            workcenter_child_ids = self.search(
+                cr, uid, [('parent_id', 'child_of', elm.id)], context=context)
+            return {
+                'view_mode': 'tree,form',
+                'name': "'%s' In Progress Operations" % elm.name,
+                'res_model': 'mrp.production.workcenter.line',
+                'type': 'ir.actions.act_window',
+                'domain': [('workcenter_id', 'in', workcenter_child_ids),
+                           ('state', 'not in', ['cancel', 'done'])],
+                'target': 'current',
+            }
+
     def toogle_used(self, cr, uid, ids, context=None):
         " Called by button in tree view "
         for elm in self.browse(cr, uid, ids, context=context):
@@ -98,10 +111,14 @@ class MrpWorkcenter(orm.Model):
             vals = {'used': used}
             self.write(cr, uid, used_ids, vals, context=context)
         self._compute_capacity(cr, uid, context=context)
-        view_id = self.pool['ir.model.data'].get_object_reference(
-            cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
-        WORKCENTER_ACTION['view_id'] = view_id
-        return WORKCENTER_ACTION
+        #view_id = self.pool['ir.model.data'].get_object_reference(
+            #cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
+        action = {
+            #'view_id':  view_id,
+            'view_mode': 'tree,form',
+        }
+        action.update(WORKCENTER_ACTION)
+        return action
 
     def _compute_capacity(self, cr, uid, context=None):
         """ Compute capacity of the workcenters which have children """

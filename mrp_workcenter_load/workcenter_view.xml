@@ -20,6 +20,12 @@
     <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view"/>
     <field name="arch" type="xml">
         <field name="name" position="replace">
+            <button name="button_workcenter_line"
+                    string="Click to see workcenter's operations"
+                    icon="gtk-execute"
+                    attrs="{'invisible': [('used', '=', False)]}"
+                    type="object"
+                    />
             <field name="hierachical_name"/>
         </field>
         <field name="resource_type" position="replace">
@@ -57,6 +63,22 @@
     id="menu_mrp_workcenter_load_list"
     parent="menu_mrp_load"
     sequence="10" groups="base.group_no_one"/>
+
+
+<record id="mrp_production_workcenter_tree_view_inherit" model="ir.ui.view">
+    <field name="model">mrp.production.workcenter.line</field>
+    <field name="inherit_id"
+           ref="mrp_operations.mrp_production_workcenter_tree_view_inherit"/>
+    <field name="arch" type="xml">
+        <field name="workcenter_id" position="before">
+            <button name="button_workcenter"
+                    string="See Workcenter details"
+                    icon="gtk-execute"
+                    type="object"/>
+        </field>
+    </field>
+</record>
+
 
 
 <!-- After installation of the module, open the related menu -->

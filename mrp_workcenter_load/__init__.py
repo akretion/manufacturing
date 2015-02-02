@@ -10,3 +10,4 @@
 
 from . import workcenter
 from . import wizard
+from . import production_line

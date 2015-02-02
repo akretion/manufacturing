@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #  licence AGPL version 3 or later
-#  see licence in __openerp__.py or http://www.gnu.org/licenses/agpl-3.0.txt
+#  see license in __openerp__.py or http://www.gnu.org/licenses/agpl-3.0.txt
 #  Copyright (C) 2015 Akretion (http://www.akretion.com).
 #  @author David BEAL <david.beal@akretion.com>
 #
@@ -74,16 +74,15 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                 cr, uid, workcenter_hours, context=context)
             view_id = self.pool['ir.model.data'].get_object_reference(
                 cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
-            WORKCENTER_ACTION['view_id'] = view_id
-            return WORKCENTER_ACTION
-            #return {
-            #    'view_mode': 'tree',
-            #    'view_id': self.pool['ir.model.data'].get_object_reference(
-            #        cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1],
-            #    'res_model': 'mrp.workcenter',
-            #    'type': 'ir.actions.act_window',
-            #    'target': 'current',
-            #}
+            # action is also used in workcenter.py
+            action = {
+                'view_id': view_id,
+                'view_mode': 'tree',
+                #'view_type': 'tree',
+            }
+            action.update(WORKCENTER_ACTION)
+            print action
+            return action
         return True
 
     def _aggregate_child_value(self, cr, uid, child, key, val, parent_hr,
