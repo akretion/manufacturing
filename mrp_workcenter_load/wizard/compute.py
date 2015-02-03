@@ -78,10 +78,8 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             action = {
                 'view_id': view_id,
                 'view_mode': 'tree',
-                #'view_type': 'tree',
             }
             action.update(WORKCENTER_ACTION)
-            print action
             return action
         return True
 

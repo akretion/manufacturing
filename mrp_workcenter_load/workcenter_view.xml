@@ -2,6 +2,8 @@
 <openerp>
   <data>
 
+<!-- mrp.workcenter-->
+
 <record id="mrp_workcenter_view" model="ir.ui.view">
     <field name="model">mrp.workcenter</field>
     <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
@@ -65,12 +67,60 @@
     sequence="10" groups="base.group_no_one"/>
 
 
+<record id="mrp_workcenter_view" model="ir.ui.view">
+    <field name="model">mrp.workcenter</field>
+    <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+    <field name="arch" type="xml">
+        <xpath expr="//page[@string='General Information']" position="before">
+            <page string="Work Orders">
+                <group col="6">
+                    <button name="button_order_workorders_in_workcenter"
+                            string="Start Ordering"
+                            class="oe_link"
+                            icon="STOCK_REFRESH"
+                            type="object"/>
+                    <field name="production_line_order_by"/>
+                    <!-- schedule_state_filter -->
+                    <div>Filtered on Schedule: 'scheduled', 'pending'</div>
+                    <button name="button_workcenter_line"
+                            help="Workcenter list"
+                            class="oe_link"
+                            icon="gtk-execute"
+                            type="object"
+                            />
+                </group>
+                <field name="production_line_ids">
+                    <tree>
+                        <field name="sequence"/>
+                        <field name="schedule_state"/>
+                        <field name="date_planned_"/>
+                        <field name="date_planned"/>
+                        <field name="name"/>
+                        <field name="product"/>
+                        <field name="qty"/>
+                        <field name="hour"/>
+                        <field name="production_state"/>
+                        <field name="production_id"/>
+                        <field name="uom"/>
+                    </tree>
+                </field>
+            </page>
+        </xpath>
+    </field>
+</record>
+
+
+
+<!-- mrp.production.workcenter.line -->
+
 <record id="mrp_production_workcenter_tree_view_inherit" model="ir.ui.view">
     <field name="model">mrp.production.workcenter.line</field>
     <field name="inherit_id"
            ref="mrp_operations.mrp_production_workcenter_tree_view_inherit"/>
     <field name="arch" type="xml">
         <field name="workcenter_id" position="before">
+            <field name="sequence"/>
+            <field name="date_planned_"/>
             <button name="button_workcenter"
                     string="See Workcenter details"
                     icon="gtk-execute"
