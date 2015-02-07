@@ -72,12 +72,8 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
             # Compute upper level data
             self._aggregate_values(
                 cr, uid, workcenter_hours, context=context)
-            view_id = self.pool['ir.model.data'].get_object_reference(
-                cr, uid, 'mrp', 'mrp_workcenter_tree_view')[1]
-            # action is also used in workcenter.py
             action = {
-                'view_id': view_id,
-                'view_mode': 'tree',
+                'view_mode': 'tree,form',
             }
             action.update(WORKCENTER_ACTION)
             return action

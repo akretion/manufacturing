@@ -17,15 +17,10 @@ class MrpProductionWorkcenterLine(orm.Model):
     _order = 'sequence ASC, name ASC'
 
     _columns = {
-        'schedule_state': fields.related(
-            'production_id', 'schedule_state',
-            type='char',
-            string='Schedule',
-            help=""),
         'date_planned_': fields.related(
             'production_id', 'date_planned',
             type='datetime',
-            string='MO Planned',
+            string='Planned MO',
             help=""),
         'sequence': fields.integer('Sequence'),
     }

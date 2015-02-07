@@ -15,7 +15,7 @@ class MrpProduction(orm.Model):
     _inherit = 'mrp.production'
 
     def set_planable_mo(self, cr, uid, ids, context=None):
-        """ Set the MO as to able to be manufactured (20, To Do)
+        """ Set the MO as to able to be manufactured 'ToDo'
             if all the MO of the sale can be manufactured
         """
         for mo in self.browse(cr, uid, ids, context=context):

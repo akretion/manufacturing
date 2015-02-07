@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-26 11:22+0000\n"
-"PO-Revision-Date: 2014-12-26 13:44+0100\n"
+"POT-Creation-Date: 2015-02-07 20:27+0000\n"
+"PO-Revision-Date: 2015-02-07 21:38+0100\n"
 "Last-Translator: David BEAL <david.beal@akretion.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,14 +17,44 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: mrp_workcenter_load
+#: field:mrp.workcenter,availability:0
+msgid "Available"
+msgstr "Disponible"
+
+#. module: mrp_workcenter_load
+#: field:mrp.workcenter,last_compute:0
+msgid "Calculation"
+msgstr "Calcul"
+
+#. module: mrp_workcenter_load
 #: view:hierarchical.workcenter.load:0
 msgid "Cancel"
 msgstr "Annuler"
 
 #. module: mrp_workcenter_load
+#: field:mrp.workcenter,day_capacity:0
+msgid "Capacity"
+msgstr "Capacité"
+
+#. module: mrp_workcenter_load
 #: field:mrp.workcenter,child_id:0
 msgid "Child Workcenter"
-msgstr "Centre de charge enfant"
+msgstr "Poste de charge enfant"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+msgid "Click to connect => will be used in capacity computation"
+msgstr "Cliquez pour connecter => sera utilisé dans le calcul de capacité"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+msgid "Click to disconnect => workcenters children will also be disconnected"
+msgstr "Cliquez pour déconnecter => les postes de travail enfants seront aussi déconnectés"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+msgid "Click to see workcenter's operations"
+msgstr "Cliquez pour voir les opération des postes de travail"
 
 #. module: mrp_workcenter_load
 #: view:hierarchical.workcenter.load:0
@@ -44,6 +74,11 @@ msgid "Compute will refresh cached load data."
 msgstr "Calculer va rafraichir les données de charge en cache."
 
 #. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+msgid "Day Capacity"
+msgstr "Capacité par jour"
+
+#. module: mrp_workcenter_load
 #: model:product.template,name:mrp_workcenter_load.first_product_template
 msgid "First produce"
 msgstr "Première production"
@@ -54,14 +89,19 @@ msgid "Global Load (h)"
 msgstr "Charge Global (h)"
 
 #. module: mrp_workcenter_load
-#: field:mrp.workcenter,last_compute:0
-msgid "Last Compute"
-msgstr "Dernier Calcul"
+#: help:mrp.workcenter,last_compute:0
+msgid "Last calculation"
+msgstr "Dernier calcul"
 
 #. module: mrp_workcenter_load
 #: field:mrp.workcenter,parent_left:0
 msgid "Left Parent"
 msgstr "Parent Gauche"
+
+#. module: mrp_workcenter_load
+#: field:mrp.workcenter,level:0
+msgid "Level"
+msgstr "Niveau"
 
 #. module: mrp_workcenter_load
 #: model:ir.ui.menu,name:mrp_workcenter_load.menu_mrp_load
@@ -88,6 +128,21 @@ msgid "Load for this particular workcenter"
 msgstr "Charge pour ce centre de charge particulier"
 
 #. module: mrp_workcenter_load
+#: field:mrp.production.workcenter.line,date_planned_:0
+msgid "Planned MO"
+msgstr "OF planifé"
+
+#. module: mrp_workcenter_load
+#: field:mrp.workcenter,hierachical_name:0
+msgid "Name"
+msgstr "Nom"
+
+#. module: mrp_workcenter_load
+#: help:mrp.workcenter,day_capacity:0
+msgid "Number of hours a day available to produce"
+msgstr "Nombre d'heures par jour de disponible pour produire"
+
+#. module: mrp_workcenter_load
 #: model:ir.actions.client,name:mrp_workcenter_load.action_workcenter_load_module_install
 msgid "Open Workcenter Load Menu"
 msgstr "Ouvrir le Menu Charge Poste de Charge"
@@ -104,8 +159,8 @@ msgid ""
 "machine, workshop, plant\n"
 "This field help to compute global load"
 msgstr ""
-"Centre de charge Parent: un centre de charge peut être de n'importe quelle type de ressource: humaine, "
-"machine, atelier, usine\n"
+"Centre de charge Parent: un centre de charge peut être de n'importe quelle "
+"type de ressource: humaine, machine, atelier, usine\n"
 "Ce champ aide à calculer la charge globale"
 
 #. module: mrp_workcenter_load
@@ -119,6 +174,22 @@ msgid "Second produce"
 msgstr "Seconde production"
 
 #. module: mrp_workcenter_load
+#: view:mrp.production.workcenter.line:0
+#, fuzzy
+msgid "See Workcenter details"
+msgstr "Workcenters"
+
+#. module: mrp_workcenter_load
+#: field:mrp.workcenter,used:0
+msgid "Used"
+msgstr "Utilisé"
+
+#. module: mrp_workcenter_load
+#: help:mrp.workcenter,used:0
+msgid "Used workcenters are taken account in capacity computing"
+msgstr "Les postes de travail utilisé sont pris en compte dans le calcul de capacité"
+
+#. module: mrp_workcenter_load
 #: code:_description:0
 #: model:ir.model,name:mrp_workcenter_load.model_mrp_workcenter
 #, python-format
@@ -126,15 +197,17 @@ msgid "Work Center"
 msgstr "Poste de charge"
 
 #. module: mrp_workcenter_load
-#: view:mrp.workcenter:0
-msgid "Workcenters"
-msgstr "Workcenters"
+#: model:ir.ui.menu,name:mrp_workcenter_load.menu_mrp_workcenter_load_list
+#, fuzzy
+msgid "Work Centers"
+msgstr "Poste de charge"
 
 #. module: mrp_workcenter_load
-#: model:ir.actions.act_window,name:mrp_workcenter_load.mrp_workcenter_load_action
-#: model:ir.ui.menu,name:mrp_workcenter_load.menu_mrp_workcenter_load
-msgid "Workcenters Load (Cached data)"
-msgstr "Workcenters Load (Cached data)"
+#: code:_description:0
+#: model:ir.model,name:mrp_workcenter_load.model_mrp_production_workcenter_line
+#, fuzzy, python-format
+msgid "Work Order"
+msgstr "Ordre de travail"
 
 #. module: mrp_workcenter_load
 #: code:_description:0
@@ -142,3 +215,14 @@ msgstr "Workcenters Load (Cached data)"
 #, python-format
 msgid "hierarchical.workcenter.load"
 msgstr "hierarchical.workcenter.load"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+msgid "red:global_load>0 and used==False;grey:used==False"
+msgstr ""
+
+#~ msgid "Last Compute"
+#~ msgstr "Dernier Calcul"
+
+#~ msgid "Workcenters Load (Cached data)"
+#~ msgstr "Workcenters Load (Cached data)"

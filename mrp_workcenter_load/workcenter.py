@@ -20,6 +20,11 @@ STATIC_STATES = ['cancel', 'done']
 
 
 class MrpWorkcenter(orm.Model):
+    """
+SELECT m.parent_id, m.id AS _id, r.name, m.parent_left, m.parent_right
+FROM mrp_workcenter m
+    LEFT JOIN resource_resource r ON r.id = m.resource_id
+    """
     _inherit = 'mrp.workcenter'
     _parent_name = "parent_id"
     _parent_store = True
@@ -31,17 +36,11 @@ class MrpWorkcenter(orm.Model):
             res[elm.id] = elm.day_capacity - elm.global_load
         return res
 
-    def _order_by_production_lines(self, cr, uid, context=None):
-        return [('date_planned_ ASC', 'Planned Date ASC'), ]
-
-    def __order_by_production_lines(self, cr, uid, context=None):
-        return self._order_by_production_lines(cr, uid, context=context)
-
     def _get_hierarchical_name(self, cr, uid, ids, field_n, arg, context=None):
         res = {}
         for elm in self.browse(cr, uid, ids):
             distance = elm.level
-            distance = ''.join(['--'] * distance)
+            distance = ''.join(['-'] * distance)
             res[elm.id] = '%s%s' % (distance, elm.name)
         return res
 
@@ -88,27 +87,17 @@ class MrpWorkcenter(orm.Model):
             _compute_availability,
             string='Available',
             type='float'),
-        'production_line_order_by': fields.selection(
-            __order_by_production_lines, 'Proposed Order',
-            help="Allow to define work orders ..."),
-        'production_line_ids': fields.one2many(
-            'mrp.production.workcenter.line',
-            'workcenter_id',
-            string='Production Lines',
-            readonly=True,
-            # this domain is displayed in the view as filter
-            # think about it when update domain:
-            # search <!-- schedule_state_filter --> in the view
-            domain=[('state', 'not in', STATIC_STATES),
-                    ('schedule_state', 'in', ['scheduled', 'pending'])],
-            help=""),
+    }
+
+    _defaults = {
+        'used': True,
     }
 
     def button_order_workorders_in_workcenter(
             self, cr, uid, ids, context=None):
         for elm in self.browse(cr, uid, ids, context=context):
             ProdLineM = self.pool['mrp.production.workcenter.line']
-            order_by = elm.production_line_order_by
+            order_by = elm.proposed_order
             prod_line_ids = ProdLineM.search(cr, uid, [
                 ('state', 'not in', STATIC_STATES),
                 ('workcenter_id.parent_id', 'child_of', elm.id), ],
