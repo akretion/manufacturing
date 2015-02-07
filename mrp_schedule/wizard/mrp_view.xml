@@ -27,9 +27,10 @@ Replace selected workcenters by another one.
 <act_window
     context="{}"
     id="action_switch_workcenter"
-    name="Switch WorkCenters"
+    name="Switch WorkCenter"
     view_mode="form"
     res_model="switch.workcenter"/>
+    <!--sequence="0"-->
 
 <record id="ir_action_switch_workcenter" model="ir.values">
     <field name="model">mrp.production.workcenter.line</field>

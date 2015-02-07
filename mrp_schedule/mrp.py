@@ -45,3 +45,15 @@ class MrpProduction(orm.Model):
             # get states and drop 'unable' state
             res = self._set_schedule_states(cr, uid, context=context)[1:]
         return res
+
+
+class MrpProductionWorkcenterLine(orm.Model):
+    _inherit = 'mrp.production.workcenter.line'
+
+    _columns = {
+        'schedule_state': fields.related(
+            'production_id', 'schedule_state',
+            type='char',
+            string='Schedule',
+            help=""),
+    }
