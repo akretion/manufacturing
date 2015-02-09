@@ -43,6 +43,7 @@ Contributors
     'data': [
         'workcenter_view.xml',
         'wizard/load_view.xml',
+        'wizard/mrp_view.xml',
     ],
     'demo': [
         'demo/mrp.workcenter.csv',

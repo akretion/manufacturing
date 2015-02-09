@@ -41,7 +41,6 @@ Contributors
     'website': 'http://www.akretion.com/',
     'data': [
         'mrp_view.xml',
-        'wizard/mrp_view.xml',
     ],
     'demo': [
     ],
