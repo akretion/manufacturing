@@ -34,7 +34,30 @@
 MRP Stock Location
 ======================
 
+This module does nothing used alone.
 
+It provides method to change the default manufacturing location:
+source and destination
+
+Example: Here is how to do
+
+
+```python
+
+    # You may inherit this method to change
+    # from/to location according to loc_field
+    def _change_location(self, cr, uid, loc_field, location, context=None):
+        super(my_class, self)._change_location(...)
+        _, location_id = self.pool['ir.model.data'].get_object_reference(
+            cr, uid, 'my_module', 'my_specific_loaction')
+        _, alt_loc_id = self.pool['ir.model.data'].get_object_reference(
+            cr, uid, 'my_module', 'my_specific_loaction')
+        if loc_field == 'location_src_id':
+            return location_id
+        else:
+            return alt_loc_id
+
+```
 
 Contributors
 ------------

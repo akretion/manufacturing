@@ -21,6 +21,7 @@ STATIC_STATES = ['cancel', 'done']
 
 class MrpWorkcenter(orm.Model):
     """
+Useful debug query
 SELECT m.parent_id, m.id AS _id, r.name, m.parent_left, m.parent_right
 FROM mrp_workcenter m
     LEFT JOIN resource_resource r ON r.id = m.resource_id
@@ -64,10 +65,11 @@ FROM mrp_workcenter m
             string='Name',
             type='char'),
         'level': fields.integer(
-            'Level'),
-        'used': fields.boolean(
-            'Used',
-            help="Used workcenters are taken account "
+            'Level',
+            help="Level computed according to workcenter hierarchy position"),
+        'online': fields.boolean(
+            'Online',
+            help="Online workcenters are taken account "
                  "in capacity computing"),
         'global_load': fields.float(
             'Global Load (h)',
@@ -90,7 +92,7 @@ FROM mrp_workcenter m
     }
 
     _defaults = {
-        'used': True,
+        'online': True,
     }
 
     def button_order_workorders_in_workcenter(
@@ -115,7 +117,7 @@ FROM mrp_workcenter m
                 cr, uid, [('parent_id', 'child_of', elm.id)], context=context)
             return {
                 'view_mode': 'tree,form',
-                'name': "'%s' In Progress Operations" % elm.name,
+                'name': "'%s' or children in Progress Operations" % elm.name,
                 'res_model': 'mrp.production.workcenter.line',
                 'type': 'ir.actions.act_window',
                 'domain': [('workcenter_id', 'in', workcenter_child_ids),
@@ -123,19 +125,19 @@ FROM mrp_workcenter m
                 'target': 'current',
             }
 
-    def toogle_used(self, cr, uid, ids, context=None):
+    def toogle_online(self, cr, uid, ids, context=None):
         " Called by button in tree view "
         for elm in self.browse(cr, uid, ids, context=context):
-            used = True
-            used_ids = ids
-            if elm.used:
-                used_ids = self.search(
+            online = True
+            online_ids = ids
+            if elm.online:
+                online_ids = self.search(
                     cr, uid, [
                         ('parent_id', 'child_of', [elm.id])],
                     context=context)
-                used = False
-            vals = {'used': used}
-            self.write(cr, uid, used_ids, vals, context=context)
+                online = False
+            vals = {'online': online}
+            self.write(cr, uid, online_ids, vals, context=context)
         self._compute_capacity(cr, uid, context=context)
         action = {
             'view_mode': 'tree,form',
@@ -150,8 +152,8 @@ FROM mrp_workcenter m
             parent, children_ids = elm.items()[0]
             capacity = 0
             for child in self.browse(cr, uid, children_ids, context=context):
-                # unused workcenters shouldn't taken account
-                if child.used:
+                # offline workcenters shouldn't taken account
+                if child.online:
                     capacity += child.day_capacity
             vals = {'day_capacity': capacity}
             self.write(cr, uid, parent, vals, context=context)

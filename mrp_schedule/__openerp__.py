@@ -31,6 +31,15 @@
     ],
     'description': """
 
+* Add a schedule state field in Manufacturing Order
+* Allow to change this field in tree view
+
+This module offers services to these modules:
+
+- mrp_whole_procurable_sale
+- mrp_workcenter_load
+- mrp_load_by_schedule_state
+
 
 Contributors
 ------------

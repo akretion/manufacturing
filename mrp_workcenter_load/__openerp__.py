@@ -32,6 +32,40 @@
     ],
     'description': """
 
+Mrp Workcenter Load
+=====================
+
+
+* Define workcenter load in a hierarchical view, examples:
+    - machine
+    - machines group
+    - workshop
+    - plant
+    - plants group
+
+* Routing operations can be attributed to a machine or
+any upper level in the structure like workshop.
+
+* Workcenters can be set offline:
+
+    - no more used in capacity calculation
+    - load of offline workcenters is switch to the workcenter
+    with next upper level
+
+* Massive replacement of Workcenter in Work Orders
+in selected operations (Work orders)
+
+* Provides shortcuts to switch between Workcenter and Workorder views
+
+* Limitation: the load is defined globally (not by date)
+=> only useful for companies with short time frame
+
+
+Quick start
+=============
+
+* install module
+* click on Manufacturing > Load > Compute
 
 Contributors
 ------------

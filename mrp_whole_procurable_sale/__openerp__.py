@@ -32,6 +32,14 @@
     ],
     'description': """
 
+Set Manufacturing Order to the Schedule State 'ToDo'
+only if each line of the sale order is able to be produced
+    => raw materials available
+
+This module offers services to these modules:
+
+- mrp_workcenter_load
+- mrp_load_by_schedule_state
 
 Contributors
 ------------

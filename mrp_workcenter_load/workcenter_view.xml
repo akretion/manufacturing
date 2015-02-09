@@ -12,7 +12,7 @@
             <button name="button_workcenter_line"
                     string="Click to see workcenter's operations"
                     icon="gtk-execute"
-                    attrs="{'invisible': [('used', '=', False)]}"
+                    attrs="{'invisible': [('online', '=', False)]}"
                     type="object"
                     />
             <field name="hierachical_name"/>
@@ -23,20 +23,20 @@
             <field name="availability"/>
             <field name="load"/>
             <field name="last_compute"/>
-            <button name="toogle_used"
-                    string="Click to connect => will be used in capacity computation"
+            <button name="toogle_online"
+                    string="Click to set online => will be used in capacity computation"
                     icon="gtk-disconnect"
-                    attrs="{'invisible': [('used', '=', True)]}"
+                    attrs="{'invisible': [('online', '=', True)]}"
                     type="object"/>
-            <button name="toogle_used"
-                    string="Click to disconnect => workcenters children will also be disconnected"
+            <button name="toogle_online"
+                    string="Click to set offline => workcenters children will also set offline"
                     icon="gtk-connect"
-                    attrs="{'invisible': [('used', '=', False)]}"
+                    attrs="{'invisible': [('online', '=', False)]}"
                     type="object"/>
-            <field name="used" invisible="1"/>
+            <field name="online" invisible="1"/>
         </field>
         <xpath expr="//tree[@ string='Work Center']" position="attributes">
-            <attribute name="colors">red:global_load>0 and used==False;grey:used==False</attribute>
+            <attribute name="colors">red:global_load>0 and online==False;grey:online==False</attribute>
         </xpath>
     </field>
 </record>

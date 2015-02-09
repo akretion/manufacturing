@@ -40,10 +40,14 @@ class MrpProduction(orm.Model):
     def _change_location(self, cr, uid, loc_field, location, context=None):
         """ You may inherit this method to change
             from/to location according to loc_field
-            super(...)
-            if loc_field == 'location_src_id':
-                return X
-            else:
-                return Y
+        super(my_class, self)._change_location(...)
+        _, location_id = self.pool['ir.model.data'].get_object_reference(
+            cr, uid, 'my_module', 'my_specific_location')
+        _, alt_loc_id = self.pool['ir.model.data'].get_object_reference(
+            cr, uid, 'my_module', alt_specific_location')
+        if loc_field == 'location_src_id':
+            return location_id
+        else:
+            return alt_loc_id
         """
         return location
