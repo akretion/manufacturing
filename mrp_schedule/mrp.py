@@ -48,12 +48,23 @@ class MrpProduction(orm.Model):
 
 
 class MrpProductionWorkcenterLine(orm.Model):
-    _inherit = 'mrp.production.workcenter.line'
+    _inherit = ['mrp.production.workcenter.line', 'abstract.selection.rotate']
+    _name = 'mrp.production.workcenter.line'
 
     _columns = {
         'schedule_state': fields.related(
             'production_id', 'schedule_state',
             type='char',
-            string='Schedule',
+            string='MO Schedule',
             help=""),
     }
+
+    def _iter_selection(self, cr, uid, ids, direction, context=None):
+        """ Allows to update the field selection to its next value
+            here, we pass through the related field
+            to go towards 'schedule_state' in mrp.production
+        """
+        for elm in self.browse(cr, uid, ids, context=context):
+            self.pool['mrp.production']._iter_selection(
+                cr, uid, [elm.production_id.id], direction, context=context)
+        return True

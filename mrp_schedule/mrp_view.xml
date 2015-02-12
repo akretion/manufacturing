@@ -39,6 +39,11 @@
     <field name="arch" type="xml">
         <field name="workcenter_id" position="before">
             <field name="schedule_state"/>
+            <button name="iter_selection_next"
+                    string="next schedule state"
+                    context="{'selection_field': 'schedule_state'}"
+                    icon="gtk-go-forward"
+                    type="object"/>
         </field>
     </field>
 </record>

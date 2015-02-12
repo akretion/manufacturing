@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-07 20:27+0000\n"
-"PO-Revision-Date: 2015-02-07 21:38+0100\n"
+"POT-Creation-Date: 2015-02-11 21:06+0000\n"
+"PO-Revision-Date: 2015-02-11 22:18+0100\n"
 "Last-Translator: David BEAL <david.beal@akretion.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,6 +15,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.5.4\n"
+
+#. module: mrp_workcenter_load
+#: view:switch.workcenter:0
+msgid "Apply"
+msgstr "Exécuter"
 
 #. module: mrp_workcenter_load
 #: field:mrp.workcenter,availability:0
@@ -27,7 +32,7 @@ msgid "Calculation"
 msgstr "Calcul"
 
 #. module: mrp_workcenter_load
-#: view:hierarchical.workcenter.load:0
+#: view:hierarchical.workcenter.load:0 view:switch.workcenter:0
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -43,18 +48,22 @@ msgstr "Poste de charge enfant"
 
 #. module: mrp_workcenter_load
 #: view:mrp.workcenter:0
-msgid "Click to connect => will be used in capacity computation"
-msgstr "Cliquez pour connecter => sera utilisé dans le calcul de capacité"
-
-#. module: mrp_workcenter_load
-#: view:mrp.workcenter:0
-msgid "Click to disconnect => workcenters children will also be disconnected"
-msgstr "Cliquez pour déconnecter => les postes de travail enfants seront aussi déconnectés"
-
-#. module: mrp_workcenter_load
-#: view:mrp.workcenter:0
 msgid "Click to see workcenter's operations"
 msgstr "Cliquez pour voir les opération des postes de travail"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+#, fuzzy
+msgid "Click to set offline => workcenters children will also set offline"
+msgstr ""
+"Cliquez pour déconnecter => les postes de travail enfants seront aussi "
+"déconnectés"
+
+#. module: mrp_workcenter_load
+#: view:mrp.workcenter:0
+#, fuzzy
+msgid "Click to set online => will be used in capacity computation"
+msgstr "Cliquez pour connecter => sera utilisé dans le calcul de capacité"
 
 #. module: mrp_workcenter_load
 #: view:hierarchical.workcenter.load:0
@@ -104,6 +113,11 @@ msgid "Level"
 msgstr "Niveau"
 
 #. module: mrp_workcenter_load
+#: help:mrp.workcenter,level:0
+msgid "Level computed according to workcenter hierarchy position"
+msgstr "Niveau calculé selon la position du poste de charge dans la hiérarchie"
+
+#. module: mrp_workcenter_load
 #: model:ir.ui.menu,name:mrp_workcenter_load.menu_mrp_load
 msgid "Load"
 msgstr "Charge"
@@ -128,11 +142,6 @@ msgid "Load for this particular workcenter"
 msgstr "Charge pour ce centre de charge particulier"
 
 #. module: mrp_workcenter_load
-#: field:mrp.production.workcenter.line,date_planned_:0
-msgid "Planned MO"
-msgstr "OF planifé"
-
-#. module: mrp_workcenter_load
 #: field:mrp.workcenter,hierachical_name:0
 msgid "Name"
 msgstr "Nom"
@@ -141,6 +150,17 @@ msgstr "Nom"
 #: help:mrp.workcenter,day_capacity:0
 msgid "Number of hours a day available to produce"
 msgstr "Nombre d'heures par jour de disponible pour produire"
+
+#. module: mrp_workcenter_load
+#: field:mrp.workcenter,online:0
+msgid "Online"
+msgstr "Fonctionnel"
+
+#. module: mrp_workcenter_load
+#: help:mrp.workcenter,online:0
+msgid "Online workcenters are taken account in capacity computing"
+msgstr ""
+"Les postes de travail utilisés sont pris en compte dans le calcul de capacité"
 
 #. module: mrp_workcenter_load
 #: model:ir.actions.client,name:mrp_workcenter_load.action_workcenter_load_module_install
@@ -164,6 +184,16 @@ msgstr ""
 "Ce champ aide à calculer la charge globale"
 
 #. module: mrp_workcenter_load
+#: field:mrp.production.workcenter.line,date_planned_:0
+msgid "Planned MO"
+msgstr "OF planifé"
+
+#. module: mrp_workcenter_load
+#: view:switch.workcenter:0
+msgid "Replace selected workcenters by another one."
+msgstr "Cliquez pour voir les opérations des postes de travail"
+
+#. module: mrp_workcenter_load
 #: field:mrp.workcenter,parent_right:0
 msgid "Right Parent"
 msgstr "Parent Droit"
@@ -175,19 +205,19 @@ msgstr "Seconde production"
 
 #. module: mrp_workcenter_load
 #: view:mrp.production.workcenter.line:0
-#, fuzzy
 msgid "See Workcenter details"
-msgstr "Workcenters"
+msgstr "Voir les détails du poste"
 
 #. module: mrp_workcenter_load
-#: field:mrp.workcenter,used:0
-msgid "Used"
-msgstr "Utilisé"
+#: model:ir.actions.act_window,name:mrp_workcenter_load.action_switch_workcenter
+#, fuzzy
+msgid "Switch WorkCenter"
+msgstr "Changer de poste de charge"
 
 #. module: mrp_workcenter_load
-#: help:mrp.workcenter,used:0
-msgid "Used workcenters are taken account in capacity computing"
-msgstr "Les postes de travail utilisé sont pris en compte dans le calcul de capacité"
+#: view:switch.workcenter:0
+msgid "Switch Workcenter"
+msgstr "Changer de poste de charge"
 
 #. module: mrp_workcenter_load
 #: code:_description:0
@@ -200,7 +230,7 @@ msgstr "Poste de charge"
 #: model:ir.ui.menu,name:mrp_workcenter_load.menu_mrp_workcenter_load_list
 #, fuzzy
 msgid "Work Centers"
-msgstr "Poste de charge"
+msgstr "Postes de charge"
 
 #. module: mrp_workcenter_load
 #: code:_description:0
@@ -210,6 +240,12 @@ msgid "Work Order"
 msgstr "Ordre de travail"
 
 #. module: mrp_workcenter_load
+#: field:switch.workcenter,workcenter_id:0
+#, fuzzy
+msgid "Workcenter"
+msgstr "Poste de charge"
+
+#. module: mrp_workcenter_load
 #: code:_description:0
 #: model:ir.model,name:mrp_workcenter_load.model_hierarchical_workcenter_load
 #, python-format
@@ -217,9 +253,24 @@ msgid "hierarchical.workcenter.load"
 msgstr "hierarchical.workcenter.load"
 
 #. module: mrp_workcenter_load
+#: view:switch.workcenter:0
+msgid "or"
+msgstr "ou"
+
+#. module: mrp_workcenter_load
 #: view:mrp.workcenter:0
-msgid "red:global_load>0 and used==False;grey:used==False"
+msgid "red:global_load>0 and online==False;grey:online==False"
 msgstr ""
+
+#. module: mrp_workcenter_load
+#: code:_description:0
+#: model:ir.model,name:mrp_workcenter_load.model_switch_workcenter
+#, fuzzy, python-format
+msgid "switch.workcenter"
+msgstr "hierarchical.workcenter.load"
+
+#~ msgid "Used"
+#~ msgstr "Utilisé"
 
 #~ msgid "Last Compute"
 #~ msgstr "Dernier Calcul"

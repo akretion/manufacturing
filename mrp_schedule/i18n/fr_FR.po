@@ -55,7 +55,7 @@ msgstr "Statut de Planification"
 #. module: mrp_schedule
 #: view:switch.workcenter:0
 msgid "Switch"
-msgstr ""
+msgstr "Changer"
 
 #. module: mrp_schedule
 #: model:ir.actions.act_window,name:mrp_schedule.action_switch_workcenter

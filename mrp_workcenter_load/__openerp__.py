@@ -44,21 +44,21 @@ Mrp Workcenter Load
     - plants group
 
 * Routing operations can be attributed to a machine or
-any upper level in the structure like workshop.
+  any upper level in the structure like workshop.
 
 * Workcenters can be set offline:
 
     - no more used in capacity calculation
     - load of offline workcenters is switch to the workcenter
-    with next upper level
+      with next upper level
 
-* Massive replacement of Workcenter in Work Orders
-in selected operations (Work orders)
+* Allows massive replacement of Workcenter in Work Orders
+  in selected operations (Work orders)
 
-* Provides shortcuts to switch between Workcenter and Workorder views
+* Provides shortcuts to switch between Workcenters and Workorders views
 
-* Limitation: the load is defined globally (not by date)
-=> only useful for companies with short time frame
+* Limitation: the load is defined globally (not by period)
+  => only useful for companies with short time frame
 
 
 Quick start

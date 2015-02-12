@@ -32,9 +32,10 @@
     ],
     'description': """
 
-* Add a tab 'Work Orders' in Workcenters form
+* Add a 'Work Orders' tab in Workcenters form
 * Allow to set Proposed Order of the work orders by workcenter
-and then schedule the production flow on this workcenter
+  to schedule the production flow on this workcenter
+
 * Developer feature: provide a method to add new 'Proposed Order' rules
 
 Contributors

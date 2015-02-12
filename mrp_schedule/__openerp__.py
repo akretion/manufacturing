@@ -31,8 +31,11 @@
     ],
     'description': """
 
-* Add a schedule state field in Manufacturing Order
-* Allow to change this field in tree view
+* Add a schedule state field in Manufacturing Orders
+* Allows to switch this selection field to the next value by one click
+
+    - in Manufacturing Orders tree view
+    - in Work Orders tree view
 
 This module offers services to these modules:
 

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-07 20:25+0000\n"
-"PO-Revision-Date: 2015-02-07 21:48+0100\n"
+"PO-Revision-Date: 2015-02-11 22:20+0100\n"
 "Last-Translator: David BEAL <david.beal@akretion.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,10 +23,8 @@ msgstr "Défini l'ordre attribué aux ordres de travail"
 
 #. module: mrp_load_by_schedule_state
 #: view:mrp.workcenter:0
-msgid ""
-"Allows to set a sequence number according to priority defined by Proposed "
-"Order field"
-msgstr "Permet de définir un numéro de séquence selon la priorité défini par le champ Tri Proposé"
+msgid "Allows to set a sequence number according to priority defined by Proposed Order field"
+msgstr "Permet de définir un numéro de séquence selon la priorité défini par le champ 'Tri Proposé'"
 
 #. module: mrp_load_by_schedule_state
 #: view:mrp.workcenter:0
@@ -90,9 +88,8 @@ msgstr "Ordre de travail"
 
 #. module: mrp_load_by_schedule_state
 #: view:mrp.workcenter:0
-#, fuzzy
 msgid "Work Orders"
-msgstr "Postes de charge"
+msgstr "Ordres de travail"
 
 #. module: mrp_load_by_schedule_state
 #: code:_description:0
@@ -100,3 +97,4 @@ msgstr "Postes de charge"
 #, python-format
 msgid "hierarchical.workcenter.load"
 msgstr "hierarchical.workcenter.load"
+
