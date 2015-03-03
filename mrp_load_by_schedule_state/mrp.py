@@ -24,6 +24,7 @@ class MrpWorkcenter(orm.Model):
     def __order_by_production_line(self, cr, uid, context=None):
         return self._order_by_production_line(cr, uid, context=context)
 
+
     _columns = {
         'unable_load': fields.float('Unable'),
         'todo_load': fields.float('Todo'),
@@ -31,6 +32,26 @@ class MrpWorkcenter(orm.Model):
         'proposed_order': fields.selection(
             __order_by_production_line, 'Proposed Order',
             help="Define order of the work orders"),
+        'ordering_field_ids': fields.many2many(
+            'ir.model.fields',
+            string='Ordering fields',
+            domain=[('model', '=', 'mrp.production.workcenter.line'),
+                    ('name', 'not in',
+                     ['message_follower_ids',
+                      'message_is_follower',
+                      'message_unread',
+                      'uom'])],
+            help=" "),
+        'accessible_field_ids': fields.many2many(
+            'ir.model.fields',
+            string='Accessible fields',
+            domain=[('model', '=', 'mrp.production.workcenter.line'),
+                    ('name', 'not in',
+                     ['message_follower_ids',
+                      'message_is_follower',
+                      'message_unread',
+                      'uom'])],
+            help="These fields will be accessible by production"),
         'production_line_ids': fields.one2many(
             'mrp.production.workcenter.line',
             'workcenter_id',

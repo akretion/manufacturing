@@ -19,7 +19,7 @@
         </field>
         <field name="resource_type" position="replace">
             <field name="global_load"/>
-            <field name="day_capacity"/>
+            <field name="h24_capacity"/>
             <field name="availability"/>
             <field name="load"/>
             <field name="last_compute"/>
@@ -62,7 +62,7 @@
             <field name="parent_id"/>
         </field>
         <xpath expr="//field[@name='time_stop']" position="after">
-            <field name="day_capacity" string="Day Capacity"/>
+            <field name="h24_capacity" string="Day Capacity"/>
         </xpath>
     </field>
 </record>

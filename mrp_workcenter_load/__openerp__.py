@@ -29,6 +29,7 @@
     'summary': "Helper to compute workcenters load",
     'depends': [
         'mrp_operations',
+        'stock_delivery_times_working_days',
     ],
     'description': """
 

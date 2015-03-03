@@ -9,6 +9,8 @@
 ##############################################################################
 
 from openerp.osv import orm, fields
+from datetime import datetime
+
 
 WORKCENTER_ACTION = {
     'res_model': 'mrp.workcenter',
@@ -16,6 +18,7 @@ WORKCENTER_ACTION = {
     'target': 'current',
 }
 
+WORKING_HOUR_DAY_DEFAULT = 8
 STATIC_STATES = ['cancel', 'done']
 
 
@@ -34,7 +37,32 @@ FROM mrp_workcenter m
     def _compute_availability(self, cr, uid, ids, field_n, arg, context=None):
         res = {}
         for elm in self.browse(cr, uid, ids):
-            res[elm.id] = elm.day_capacity - elm.global_load
+            res[elm.id] = elm.h24_capacity - elm.global_load
+        return res
+
+    def get_capacity_next24h(self, cr, uid, ids, field_n, arg, context=None):
+        """ Compute the hours number to use the workcenter in next 24h
+            excluding unworking days
+            @return float: hour
+            example:
+                 We are Friday 15h, the next working 24h ends Monday at 14h59
+            """
+        now = datetime.today()
+        mResCal = self.pool['resource.calendar']
+        horizon = 1  # day
+        res = {}
+        for workc in self.browse(cr, uid, ids, context=context):
+            working_hours_in_next24 = WORKING_HOUR_DAY_DEFAULT
+            if workc.calendar_id:
+                # _get_date exclude not working days
+                working_date_in_next24 = mResCal._get_date(
+                    cr, uid, workc.calendar_id.id, now,
+                    horizon, resource=workc.id, context=context)
+                # interval_hours_get 18.0    intervalle entre 2 dates
+                working_hours_in_next24 = mResCal.interval_hours_get(
+                    cr, uid, workc.calendar_id.id, now,
+                    working_date_in_next24, resource=workc.id)
+            res[workc.id] = working_hours_in_next24
         return res
 
     def _get_hierarchical_name(self, cr, uid, ids, field_n, arg, context=None):
@@ -82,8 +110,10 @@ FROM mrp_workcenter m
             'Calculation',
             oldname="last_compute",
             help="Last calculation"),
-        'day_capacity': fields.float(
+        'h24_capacity': fields.function(
+            get_capacity_next24h,
             'Capacity',
+            type='float',
             help="Number of hours a day available to produce"),
         'availability': fields.function(
             _compute_availability,
@@ -154,8 +184,8 @@ FROM mrp_workcenter m
             for child in self.browse(cr, uid, children_ids, context=context):
                 # offline workcenters shouldn't taken account
                 if child.online:
-                    capacity += child.day_capacity
-            vals = {'day_capacity': capacity}
+                    capacity += child.h24_capacity
+            vals = {'h24_capacity': capacity}
             self.write(cr, uid, parent, vals, context=context)
         return True
 

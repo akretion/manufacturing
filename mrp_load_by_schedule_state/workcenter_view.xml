@@ -17,9 +17,9 @@
 <record id="mrp_workcenter_view" model="ir.ui.view">
     <field name="model">mrp.workcenter</field>
     <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
-    <field name="arch" type="xml">
-        <xpath expr="//page[@string='General Information']" position="before">
-            <page string="Work Orders">
+    <field name="arch" type="xml"> position="before">-->
+        <xpath expr="//notebook/page[last()]" position="before">
+            <page string="Work Orders" name="workorder">
                 <group col="6">
                     <!-- schedule_state_filter -->
                     <div>List filtered on Schedule: 'scheduled', 'pending'</div>
@@ -51,6 +51,28 @@
                         <field name="uom"/>
                     </tree>
                 </field>
+            </page>
+            <page string="Criterious" name="field">
+                <group col="4">
+                <div col="2">
+                    <label for="ordering_field_ids"/>
+                    <field name="ordering_field_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="field_description"/>
+                        </tree>
+                    </field>
+                </div>
+                <div col="2">
+                    <label for="accessible_field_ids"/>
+                    <field name="accessible_field_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="field_description"/>
+                        </tree>
+                    </field>
+                </div>
+                </group>
             </page>
         </xpath>
     </field>
