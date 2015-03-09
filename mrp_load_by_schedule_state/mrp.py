@@ -15,15 +15,73 @@ from openerp.addons.mrp_workcenter_load.workcenter import STATIC_STATES
 PRODUCTION_PROPOSED_ORD_DEF = 'date_planned_ ASC'
 
 
+class MrpWorkcenterOrdering(orm.Model):
+    _name = 'mrp.workcenter.ordering'
+    _description = "Workcenter Ordering"
+    _order = 'sequence'
+
+    _columns = {
+        'sequence': fields.integer(
+            'Sequence'),
+        'workcenter_id': fields.many2one(
+            'mrp.workcenter',
+            'Workcenter'),
+        'field_id': fields.many2one(
+            'ir.model.fields',
+            string='Work Order Field',
+            domain=[('model', '=', 'mrp.production.workcenter.line'),
+                    ('name', 'not in',
+                     ['message_follower_ids',
+                      'message_is_follower',
+                      'message_unread',
+                      'uom'])],
+            help="",),
+        'ttype': fields.related(
+            'field_id', 'ttype',
+            type='char',
+            string='Type'),
+        'order': fields.selection(
+            [('asc', 'Asc'), ('desc', 'Desc')],
+            string='Order'),
+    }
+
+    _defaults = {
+        'order': 'asc',
+    }
+
+
 class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
+
+    def _get_criterious_html(self, cr, uid, ids, field_n, arg, context=None):
+        """ Convert String criterious values to table format"""
+        table_format = """
+        <table cellspacing="0" cellpadding="5" border="1"
+               width="70%%" style="border-color:#cacaca;border-style:solid;"
+               class="oe_list_content">
+            <thead>
+                <tr align='center'>
+                    <th>Description</td>
+                    <th>Value</td>
+                </tr>
+            </thead>
+            <tbody style="cursor:default">"""
+        res = {}
+        for elm in self.browse(cr, uid, ids):
+            for field in elm.accessible_field_ids:
+                table_format += """<tr align='center'>
+                                    <td>%s</td>
+                                    #<td></td>
+                                </tr>""" % (field.field_description)
+            table_format += """</tbody></table> """
+            res[elm.id] = table_format
+        return res
 
     def _order_by_production_line(self, cr, uid, context=None):
         return [(PRODUCTION_PROPOSED_ORD_DEF, 'Planned Date ASC')]
 
     def __order_by_production_line(self, cr, uid, context=None):
         return self._order_by_production_line(cr, uid, context=context)
-
 
     _columns = {
         'unable_load': fields.float('Unable'),
@@ -32,15 +90,10 @@ class MrpWorkcenter(orm.Model):
         'proposed_order': fields.selection(
             __order_by_production_line, 'Proposed Order',
             help="Define order of the work orders"),
-        'ordering_field_ids': fields.many2many(
-            'ir.model.fields',
+        'ordering_field_ids': fields.one2many(
+            'mrp.workcenter.ordering',
+            'workcenter_id',
             string='Ordering fields',
-            domain=[('model', '=', 'mrp.production.workcenter.line'),
-                    ('name', 'not in',
-                     ['message_follower_ids',
-                      'message_is_follower',
-                      'message_unread',
-                      'uom'])],
             help=" "),
         'accessible_field_ids': fields.many2many(
             'ir.model.fields',
@@ -63,6 +116,12 @@ class MrpWorkcenter(orm.Model):
             domain=[('state', 'not in', STATIC_STATES),
                     ('schedule_state', 'in', ['scheduled', 'pending'])],
             help=""),
+        'criterious_output': fields.function(
+            _get_criterious_html,
+            string='Criterious',
+            type='html',
+            store=False,
+            help="Display criterious tab"),
     }
 
     _defaults = {

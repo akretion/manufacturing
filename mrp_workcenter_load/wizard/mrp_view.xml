@@ -11,7 +11,7 @@
         <form string="Switch Workcenter" version="7.0">
             <group col="4">
                 <p colspan="4">
-Replace selected workcenters by another one.
+Replace selected workcenters by another one. 
                 </p>
                 <field name="workcenter_id"/>
             </group>
@@ -44,6 +44,7 @@ Replace selected workcenters by another one.
            name="value"/>
     <field eval="True" name="object"/>
 </record>
+
 
 
   </data>
