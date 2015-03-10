@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+  <record id="mrp_production_workcenter_form_view_inherit" model="ir.ui.view">
+      <field name="model">mrp.production.workcenter.line</field>
+      <field name="inherit_id"
+             ref="mrp_operations.mrp_production_workcenter_form_view_inherit"/>
+      <field name="arch" type="xml">
+          <xpath expr="//page[@string='Information']" position="inside">
+             <field name="criterious_output"/>
+          </xpath>
+      </field>
+  </record>
+  
+
+  </data>
+</openerp>

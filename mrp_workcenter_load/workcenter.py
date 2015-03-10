@@ -130,13 +130,11 @@ FROM mrp_workcenter m
         for elm in self.browse(cr, uid, ids, context=context):
             ProdLineM = self.pool['mrp.production.workcenter.line']
             order_by = elm.proposed_order
-            order_by = [row.field_id.name
+            order_by = ['%s %s' % (row.field_id.name, row.order)
                         for row in elm.ordering_field_ids]
-            print order_by
             prod_line_ids = ProdLineM.search(cr, uid, [
                 ('state', 'not in', STATIC_STATES),
                 ('workcenter_id.parent_id', 'child_of', elm.id), ],
-                #order=order_by, context=context)
                 order=', '.join(order_by), context=context)
             count = 1
             for prod_line_id in prod_line_ids:

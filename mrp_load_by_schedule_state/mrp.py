@@ -50,18 +50,56 @@ class MrpWorkcenterOrdering(orm.Model):
     }
 
 
-class MrpWorkcenter(orm.Model):
-    _inherit = 'mrp.workcenter'
+class MrpProdLine(orm.Model):
+    _inherit = 'mrp.production.workcenter.line'
 
     def _get_criterious_html(self, cr, uid, ids, field_n, arg, context=None):
-        """ Convert String criterious values to table format"""
+        """ Convert String criterious values to table format """
         table_format = """
         <table cellspacing="0" cellpadding="5" border="1"
                width="70%%" style="border-color:#cacaca;border-style:solid;"
                class="oe_list_content">
             <thead>
                 <tr align='center'>
-                    <th>Description</td>
+                    <th>Field</td>
+                    <th>Value</td>
+                </tr>
+            </thead>
+            <tbody style="cursor:default">"""
+        res = {}
+        for elm in self.browse(cr, uid, ids):
+            for field in elm.workcenter_id.accessible_field_ids:
+                table_format += """<tr align='center'>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                </tr>"""% (
+                    field.field_description, elm[field.name])
+            table_format += """</tbody></table> """
+            res[elm.id] = table_format
+        return res
+
+    _columns = {
+        'criterious_output': fields.function(
+            _get_criterious_html,
+            string='Criterious',
+            type='html',
+            store=False,
+            help="Display criterious tab"),
+    }
+
+
+class MrpWorkcenter(orm.Model):
+    _inherit = 'mrp.workcenter'
+
+    def _get_criterious_html(self, cr, uid, ids, field_n, arg, context=None):
+        """ Convert String criterious values to table format """
+        table_format = """
+        <table cellspacing="0" cellpadding="5" border="1"
+               width="70%%" style="border-color:#cacaca;border-style:solid;"
+               class="oe_list_content">
+            <thead>
+                <tr align='center'>
+                    <th>Field</td>
                     <th>Value</td>
                 </tr>
             </thead>
