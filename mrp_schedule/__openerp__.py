@@ -53,6 +53,7 @@ Contributors
     'website': 'http://www.akretion.com/',
     'data': [
         'mrp_view.xml',
+        'transient/mrp_view.xml',
     ],
     'demo': [
     ],

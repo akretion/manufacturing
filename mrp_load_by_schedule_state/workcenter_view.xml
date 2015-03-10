@@ -75,7 +75,6 @@
                     </field>
                 </div>
                 </group>
-                <field name="criterious_output"/>
             </page>
         </xpath>
     </field>
