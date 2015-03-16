@@ -22,6 +22,14 @@ WORKING_HOUR_DAY_DEFAULT = 8
 STATIC_STATES = ['cancel', 'done']
 
 
+class WorkcenterGroup(orm.Model):
+    _name = 'workcenter.group'
+    _description = 'Workcenter Group'
+
+    _columns = {
+        'name': fields.char('Name'),
+    }
+
 class MrpWorkcenter(orm.Model):
     """
 Useful debug query
@@ -81,6 +89,9 @@ FROM mrp_workcenter m
             help="Parent Work Center: a workcenter can be any kind of "
                  "ressource: human, machine, workshop, plant\n"
                  "This field help to compute global load"),
+        'workcenter_group_id': fields.many2one(
+            'workcenter.group',
+            string='Workcenter Group'),
         'parent_left': fields.integer('Left Parent', select=1),
         'parent_right': fields.integer('Right Parent', select=1),
         'child_id': fields.one2many(

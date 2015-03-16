@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data noupdate="0">
+
+<record id="mrp.mrp_workcenter_action" model="ir.actions.act_window">
+    <field name="context">{'search_default_group_by_workcenter': 1}</field>
+</record>
+
+  </data>
+</openerp>

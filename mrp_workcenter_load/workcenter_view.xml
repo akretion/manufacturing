@@ -60,12 +60,25 @@
     <field name="arch" type="xml">
         <field name="active" position="after">
             <field name="parent_id"/>
+            <field name="workcenter_group_id"/>
         </field>
         <xpath expr="//field[@name='time_stop']" position="after">
             <field name="h24_capacity" string="Day Capacity"/>
         </xpath>
     </field>
 </record>
+
+<record id="view_mrp_workcenter_search" model="ir.ui.view">
+    <field name="model">mrp.workcenter</field>
+    <field name="inherit_id" ref="mrp.view_mrp_workcenter_search"/>
+    <field name="arch" type="xml">
+      <xpath expr="//filter[@string='Type']" position="before">
+        <filter string="Workc Group" domain="[]" name="group_by_workcenter"
+                context="{'group_by':'workcenter_group_id'}"/>
+      </xpath>
+    </field>
+</record>
+
 
 <!-- mrp.production.workcenter.line -->
 

@@ -76,6 +76,7 @@ Contributors
 """,
     'website': 'http://www.akretion.com/',
     'data': [
+        'workcenter_data.xml',
         'workcenter_view.xml',
         'wizard/load_view.xml',
         'wizard/mrp_view.xml',
