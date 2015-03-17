@@ -25,10 +25,13 @@ STATIC_STATES = ['cancel', 'done']
 class WorkcenterGroup(orm.Model):
     _name = 'workcenter.group'
     _description = 'Workcenter Group'
+    _order = 'sequence ASC, name ASC'
 
     _columns = {
         'name': fields.char('Name'),
+        'sequence': fields.integer('Sequence'),
     }
+
 
 class MrpWorkcenter(orm.Model):
     """
@@ -136,6 +139,43 @@ FROM mrp_workcenter m
         'online': True,
     }
 
+    def read_group(self, cr, uid, domain, fields, groupby, offset=0, limit=None,
+                   context=None, orderby=False):
+        result = super(MrpWorkcenter, self).read_group(
+            cr, uid, domain, fields, groupby, offset=offset, limit=limit,
+            context=context, orderby=orderby)
+        condition = False
+        if result and '__domain' in result[0]:
+            if result[0]['__domain']:
+                if result[0]['__domain'][0][0] == 'workcenter_group_id':
+                    condition = True
+        if condition:
+            FIELDS_TO_SUM = ('h24_capacity', 'availability')
+            ids = self.search(cr, uid, [], context=context)
+            res = {}
+            for elm in self.browse(cr, uid, ids, context=context):
+                for field in FIELDS_TO_SUM:
+                    if elm.workcenter_group_id.id not in res:
+                        res[elm.workcenter_group_id.id] = {field: 0}
+                    if field not in res[elm.workcenter_group_id.id]:
+                        res[elm.workcenter_group_id.id][field] = 0
+                    if elm[field]:
+                        res[elm.workcenter_group_id.id][field] += elm[field]
+            workc_grp_position = {}
+            count = 0
+            for r_workc_grp in result:
+                workc_grp_position[r_workc_grp['__domain'][0][2]] = count
+                count += 1
+            for elm in res:
+                for field in FIELDS_TO_SUM:
+
+                    result[workc_grp_position[elm]][field] = res[elm][field]
+        return result
+# [
+# {'load': 1.2, '__domain': [('workcenter_group_id', '=', 8)], 'workcenter_group_id': (8, u'Coupe profil'), 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 3L, 'global_load': 2.4, 'todo_load': 0.45, 'pending_load': 0.6},
+# {'load': 2.0, '__domain': [('workcenter_group_id', '=', 14)], 'workcenter_group_id': (14, u'Emball. enrouleurs'), 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 3L, 'global_load': 4.0, 'todo_load': 0.75, 'pending_load': 1.0},
+# {'load': 0.0, '__domain': [('workcenter_group_id', '=', False)], 'workcenter_group_id': False, 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 9L, 'global_load': 0.0, 'todo_load': 0.0, 'pending_load': 0.0}
+# ]
     def button_order_workorders_in_workcenter(
             self, cr, uid, ids, context=None):
         for elm in self.browse(cr, uid, ids, context=context):

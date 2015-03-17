@@ -7,18 +7,17 @@
     <field name="inherit_id" ref="mrp_workcenter_load.mrp_workcenter_tree_view"/>
     <field name="arch" type="xml">
         <field name="global_load" position="before">
-            <field name="unable_load"/>
-            <field name="todo_load"/>
-            <field name="scheduled_load"/>
+            <field name="unable_load" widget="float_time"/>
+            <field name="todo_load" widget="float_time"/>
+            <field name="scheduled_load" widget="float_time"/>
         </field>
     </field>
 </record>
 
-
 <record id="mrp_workcenter_view" model="ir.ui.view">
     <field name="model">mrp.workcenter</field>
     <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
-    <field name="arch" type="xml"> position="before">-->
+    <field name="arch" type="xml">
         <xpath expr="//notebook/page[last()]" position="before">
             <page string="Work Orders" name="workorder">
                 <group col="6">
