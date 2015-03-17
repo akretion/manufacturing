@@ -77,8 +77,8 @@ FROM mrp_workcenter m
         res = {}
         for elm in self.browse(cr, uid, ids):
             distance = elm.level
-            distance = ''.join(['-'] * distance)
-            res[elm.id] = '%s%s' % (distance, elm.name)
+            distance = '-' * distance
+            res[elm.id] = '%s %s' % (distance, elm.name)
         return res
 
     _columns = {
@@ -123,7 +123,7 @@ FROM mrp_workcenter m
             help="Last calculation"),
         'h24_capacity': fields.function(
             get_capacity_next24h,
-            'Capacity',
+            string='Capacity',
             type='float',
             help="Number of hours a day available to produce"),
         'availability': fields.function(
