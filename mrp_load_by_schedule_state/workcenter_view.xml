@@ -7,9 +7,9 @@
     <field name="inherit_id" ref="mrp_workcenter_load.mrp_workcenter_tree_view"/>
     <field name="arch" type="xml">
         <field name="global_load" position="before">
-            <field name="unable_load" widget="float_time"/>
-            <field name="todo_load" widget="float_time"/>
-            <field name="scheduled_load" widget="float_time"/>
+            <field name="unable_load" widget="float_time" sum="Unable"/>
+            <field name="todo_load" widget="float_time" sum="Todo"/>
+            <field name="scheduled_load" widget="float_time" sum="Scheduled"/>
         </field>
     </field>
 </record>

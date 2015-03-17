@@ -118,4 +118,3 @@ class HierarchicalWorkcenterLoad(orm.TransientModel):
                 #print 'NORMALLY NOT', parent_hr
                 work_hours[parent] = parent_hr
                 MrpWorkC.write(cr, uid, parent, parent_hr, context=context)
-        #print '\n', work_hours

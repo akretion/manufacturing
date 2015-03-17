@@ -30,6 +30,7 @@ class WorkcenterGroup(orm.Model):
     _columns = {
         'name': fields.char('Name'),
         'sequence': fields.integer('Sequence'),
+        'active': fields.boolean('Active'),
     }
 
 
@@ -139,6 +140,69 @@ FROM mrp_workcenter m
         'online': True,
     }
 
+    def _add_sql_clauses(self, cr, uid, workcenter_ids, context=None):
+        states = ['ready', 'confirmed', 'in_production']
+        states_clause = "'%s'" % "', '".join(states)
+        workcenters_clause = ", ".join([str(x) for x in workcenter_ids])
+        return (states_clause, workcenters_clause)
+
+    def _get_sql_query(self, cr, uid, context=None):
+        query = """
+            SELECT wl.workcenter_id AS workcenter, sum(wl.hour) AS hour
+            FROM mrp_production_workcenter_line wl
+                LEFT JOIN mrp_production mp ON wl.production_id = mp.id
+            WHERE mp.state IN (%s) and wl.workcenter_id IN (%s)
+            GROUP BY wl.workcenter_id
+        """ % (self._add_sql_clauses(cr, uid, self._workcter_ids,
+                                     context=context))
+        return query
+
+    def _prepare_load_vals(self, cr, uid, result, context=None):
+        vals = {}
+        for elm in result:
+            vals[elm['workcenter']] = {'load': elm['hour']}
+        return vals
+
+    def _erase_cached_data(self, cr, uid, context=None):
+        " Update to 0 '*load' columns "
+        MrpWorkCter_m = self.pool['mrp.workcenter']
+        vals = {}
+        for col in MrpWorkCter_m._columns:
+            if len(col) > 3 and col[-4:] == 'load':
+                vals.update({col: 0})
+        MrpWorkCter_m.write(cr, uid, self._workcter_ids, vals, context=context)
+        return True
+
+    def _get_workc_domain(self, cr, uid, context=None):
+        return [('online', '=', True)]
+
+    def compute_load(self, cr, uid, ids, context=None):
+        # workcenter_hours = {}
+        domain = self._get_workc_domain(cr, uid, context=context)
+        self._workcter_ids = self.search(cr, uid, domain, context=context)
+        if self._workcter_ids:
+            self._erase_cached_data(cr, uid, context=context)
+            # Compute time for workcenters in mrp_production_workcenter_line
+            cr.execute(self._get_sql_query(cr, uid, context=context))
+            result = cr.dictfetchall()
+            vals = self._prepare_load_vals(cr, uid, result, context=context)
+            for workcenter, values in vals.items():
+                self.write(cr, uid, workcenter, values, context=context)
+                # workcenter_hours[workcenter] = values
+                # workcenter_hours[workcenter]['global_load'] = values['load']
+                # to_update = dict(values)
+                #to_update['global_load'] = values['load']
+                # to_update['last_compute'] = datetime.strftime(ERP_DATETIME)
+            # Compute upper level data
+            # self._aggregate_values(
+            #     cr, uid, workcenter_hours, context=context)
+            # action = {
+            #     'view_mode': 'tree,form',
+            # }
+            # action.update(WORKCENTER_ACTION)
+            # return action
+        return True
+
     def read_group(self, cr, uid, domain, fields, groupby, offset=0, limit=None,
                    context=None, orderby=False):
         result = super(MrpWorkcenter, self).read_group(
@@ -150,7 +214,8 @@ FROM mrp_workcenter m
                 if result[0]['__domain'][0][0] == 'workcenter_group_id':
                     condition = True
         if condition:
-            FIELDS_TO_SUM = ('h24_capacity', 'availability')
+            FIELDS_TO_SUM = ('h24_capacity', 'availability',
+                             'unable_load', 'todo_load', 'scheduled_load')
             ids = self.search(cr, uid, [], context=context)
             res = {}
             for elm in self.browse(cr, uid, ids, context=context):
@@ -171,11 +236,8 @@ FROM mrp_workcenter m
 
                     result[workc_grp_position[elm]][field] = res[elm][field]
         return result
-# [
-# {'load': 1.2, '__domain': [('workcenter_group_id', '=', 8)], 'workcenter_group_id': (8, u'Coupe profil'), 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 3L, 'global_load': 2.4, 'todo_load': 0.45, 'pending_load': 0.6},
-# {'load': 2.0, '__domain': [('workcenter_group_id', '=', 14)], 'workcenter_group_id': (14, u'Emball. enrouleurs'), 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 3L, 'global_load': 4.0, 'todo_load': 0.75, 'pending_load': 1.0},
-# {'load': 0.0, '__domain': [('workcenter_group_id', '=', False)], 'workcenter_group_id': False, 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 9L, 'global_load': 0.0, 'todo_load': 0.0, 'pending_load': 0.0}
-# ]
+# [{'load': 1.2, '__domain': [('workcenter_group_id', '=', 8)], 'workcenter_group_id': (8, u'Coupe profil'), 'scheduled_load': 0.0, '__context': {'group_by': []}, 'workcenter_group_id_count': 3L, 'global_load': 2.4, 'todo_load': 0.45, 'pending_load': 0.6}]
+
     def button_order_workorders_in_workcenter(
             self, cr, uid, ids, context=None):
         for elm in self.browse(cr, uid, ids, context=context):

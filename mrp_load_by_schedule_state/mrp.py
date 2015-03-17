@@ -96,6 +96,54 @@ class MrpProdLine(orm.Model):
 class MrpWorkcenter(orm.Model):
     _inherit = 'mrp.workcenter'
 
+    def fields_view_get(self, cr, uid, view_id=None, view_type='form',
+                        context=None, toolbar=False, submenu=False):
+        workcenter_ids = self.search(cr, uid, [], context=context)
+        self.pool['hierarchical.workcenter.load'].compute_load(
+            cr, uid, workcenter_ids, context=context)
+        return super(MrpWorkcenter, self).fields_view_get(
+            cr, uid, view_id=view_id, view_type=view_type, context=context,
+            toolbar=toolbar, submenu=submenu)
+
+    def _add_sql_clauses(self, cr, uid, workcenter_ids, context=None):
+        states = ['ready', 'confirmed', 'in_production']
+        states_clause = "'%s'" % "', '".join(states)
+        workcenters_clause = ", ".join([str(x) for x in workcenter_ids])
+        return (states_clause, workcenters_clause)
+
+    def compute_load(self, cr, uid, ids, field_n, arg, context=None):
+        FIELDS_TO_COMPUTE = ('unable_load', 'todo_load', 'scheduled_load')
+        res = {}
+        result = {}
+        workcenter_ids = self.search(cr, uid, [], context=context)
+        query = """
+            SELECT wl.workcenter_id AS workcenter, sum(wl.hour) AS hour,
+                mp.schedule_state
+            FROM mrp_production_workcenter_line wl
+                LEFT JOIN mrp_production mp ON wl.production_id = mp.id
+            WHERE mp.state IN (%s) and wl.workcenter_id IN (%s)
+            GROUP BY wl.workcenter_id, mp.schedule_state
+        """ % (self._add_sql_clauses(cr, uid, workcenter_ids, context=context))
+        cr.execute(query)
+        # [{'hour': 0.25, 'workcenter': 30, 'schedule_state': u'unable'}, ...]
+        result = cr.dictfetchall()
+        print '\nresult', result
+        aaa = {}
+        for elm in result:
+            aaa[elm['workcenter']] = {elm['schedule_state']: elm['hour']}
+        # print '\naaa', aaa
+        for elm in self.browse(cr, uid, workcenter_ids, context=context):
+            if elm.id not in res:
+                res[elm.id] = {x: 0 for x in FIELDS_TO_COMPUTE}
+            else:
+                res[elm.id] = {aaa[elm.id]['schedule_state']: elm['hour']}
+        print 'res', res
+        return res
+
+    def _compute_load(self, cr, uid, ids, field_n, arg, context=None):
+        return self.compute_load(
+            cr, uid, ids, field_n, arg, context=context)
+
     def _order_by_production_line(self, cr, uid, context=None):
         return [(PRODUCTION_PROPOSED_ORD_DEF, 'Planned Date ASC')]
 

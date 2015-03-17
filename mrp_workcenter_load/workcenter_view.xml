@@ -18,10 +18,10 @@
             <field name="hierachical_name"/>
         </field>
         <field name="resource_type" position="replace">
-            <field name="global_load" widget="float_time"/>
-            <field name="h24_capacity" widget="float_time"/>
-            <field name="availability" widget="float_time"/>
-            <field name="load" widget="float_time"/>
+            <field name="global_load" widget="float_time" sum="Global Load"/>
+            <field name="h24_capacity" widget="float_time" sum="Capacity"/>
+            <field name="availability" widget="float_time" sum="Available"/>
+            <field name="load" widget="float_time" sum="Load"/>
             <field name="last_compute"/>
             <button name="toogle_online"
                     string="Click to set online => will be used in capacity computation"
