@@ -7,6 +7,7 @@
     <field name="inherit_id" ref="mrp_workcenter_load.mrp_workcenter_tree_view"/>
     <field name="arch" type="xml">
         <field name="global_load" position="before">
+            <field name="unable_load"/>
             <field name="todo_load"/>
             <field name="scheduled_load"/>
         </field>
